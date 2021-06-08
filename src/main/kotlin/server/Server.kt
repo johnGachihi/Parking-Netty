@@ -3,6 +3,7 @@ package server
 import com.digitalpetri.modbus.codec.ModbusRequestDecoder
 import com.digitalpetri.modbus.codec.ModbusResponseEncoder
 import com.digitalpetri.modbus.codec.ModbusTcpCodec
+import core.decoder.writerequest.DispatchingWriteRequestDecoder
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.ChannelInitializer
 import io.netty.channel.nio.NioEventLoopGroup
@@ -17,12 +18,16 @@ class Server(
     private val serverBootstrap = ServerBootstrap()
     private val eventLoopGroup = NioEventLoopGroup()
 
+    // Non-netty
+    private val writeRequestDecoder = DispatchingWriteRequestDecoder(emptyMap())
+
     private val channelInitializer = object : ChannelInitializer<SocketChannel>() {
         override fun initChannel(ch: SocketChannel) {
             ch.pipeline()
                 .addLast(ModbusTcpCodec(ModbusResponseEncoder(), ModbusRequestDecoder()))
-                .addLast(ModbusTcpPayloadInboundHandler())
-                .addLast(ModbusTcpPayloadOutboundHandler())
+                .addLast("modbusTcpPayloadHandler", ModbusTcpPayloadHandler(writeRequestDecoder))
+                .addLast("writeRequestHandler", WriteRequestHandler())
+            // Add exception-handler Handler
         }
     }
 

@@ -12,4 +12,34 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("com.digitalpetri.modbus:modbus-slave-tcp:1.2.0")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.7.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+}
+
+tasks.getByName<Test>("test") {
+    useJUnitPlatform()
+}
+
+tasks.register<Jar>("uberJar") {
+    archiveClassifier.set("uber")
+
+    manifest {
+        attributes(
+            "Main-Class" to "MainKt",
+            "Implementation-Title" to "Gradle",
+            "Implementation-Version" to archiveVersion
+        )
+    }
+
+    from(sourceSets.main.get().output)
+
+    dependsOn(configurations.runtimeClasspath)
+    from({
+        configurations.runtimeClasspath.get().filter {
+            it.name.endsWith("jar")
+        }.map {
+            zipTree(it)
+        }
+    })
 }

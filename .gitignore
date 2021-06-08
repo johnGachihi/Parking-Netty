@@ -15,3 +15,5 @@ out/
 !**/src/test/**/out/
 
 gradle.properties
+
+**/toremove

@@ -1,6 +1,9 @@
 package core
 
+import com.digitalpetri.modbus.requests.WriteMultipleRegistersRequest
 import io.netty.buffer.ByteBuf
 
-data class WriteRequest(val data: ByteBuf) : Request {
+class WriteRequest(modbusRequestPdu: WriteMultipleRegistersRequest) : Request {
+    val writeData: ByteBuf = modbusRequestPdu.values
+    override val actionCode: Int = modbusRequestPdu.address
 }
