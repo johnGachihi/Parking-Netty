@@ -3,17 +3,10 @@ package server
 import com.digitalpetri.modbus.ExceptionCode
 import com.digitalpetri.modbus.FunctionCode
 import com.digitalpetri.modbus.codec.ModbusTcpPayload
-import com.digitalpetri.modbus.requests.*
 import com.digitalpetri.modbus.responses.ExceptionResponse
-import com.digitalpetri.modbus.responses.WriteMultipleRegistersResponse
-import com.digitalpetri.modbus.responses.WriteSingleCoilResponse
-import core.WriteRequest
-import core.decoder.writerequest.WriteRequestDecoder
+import core.decode.WriteRequestDecoder
 import io.netty.channel.ChannelDuplexHandler
-import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext
-import io.netty.channel.ChannelPromise
-import io.netty.util.CharsetUtil
 
 /*
 Purpose:
@@ -26,6 +19,7 @@ Why should we have separate Write and Read Handlers:
 Let's decode the writeData here,
 And do away with Write and Read Handlers
 */
+// TODO: Rename to something like Modbus-to-Application Decoder
 class ModbusTcpPayloadHandler(
     private val writeRequestDecoder: WriteRequestDecoder
 ) : ChannelDuplexHandler() {
@@ -36,16 +30,6 @@ class ModbusTcpPayloadHandler(
         when (msg.modbusPdu.functionCode) {
             FunctionCode.WriteMultipleRegisters -> {
                 ctx.fireChannelRead(writeRequestDecoder.decode(msg))
-                /*
-                ** Inside WriteRequestDecoder **
-                * - What happens when the action is not recognized
-                * ** ** ** ** ** ** ** ** ** ***
-                val writeRequest = writeRequestDecoder.decode(msg)
-                ctx.fireChannelRead(writeRequest)
-
-                val decodedData = writeDataDecoder.decode(data, action)
-
-                */
             }
             else -> writeException(ExceptionCode.IllegalFunction, ctx, msg)
         }

@@ -1,4 +1,3 @@
 package core
 
-class UnsupportedActionException(s: String? = null): Exception(s) {
-}
+class UnsupportedActionException(s: String? = null): Exception(s)
