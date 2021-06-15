@@ -8,11 +8,15 @@ import core.decode.RfidDecoder
 import core.decode.WriteDataDecoderRegistry
 import core.decode.WriteRequestDecoder
 import core.decode.WriteRequestDecoderImpl
+import endpoints.EndpointRegistry
+import endpoints.EndpointRegistryImpl
+import endpoints.EntryEndpoint
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.ChannelInitializer
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioServerSocketChannel
+import io.netty.util.concurrent.DefaultEventExecutorGroup
 import java.net.InetSocketAddress
 
 class Server(
@@ -22,12 +26,19 @@ class Server(
     private val serverBootstrap = ServerBootstrap()
     private val eventLoopGroup = NioEventLoopGroup()
 
-    // Non-netty
+    // TODO: Extract from this class
     private val writeRequestDecoder: WriteRequestDecoder
     init {
         val registry = WriteDataDecoderRegistry()
-        registry.register(RequestAction.Entry, RfidDecoder())
+        registry.register(RequestAction.Exit, RfidDecoder())
         writeRequestDecoder = WriteRequestDecoderImpl(registry)
+    }
+
+    // TODO: Extract to server setup, maybe in main
+    private val endpointRegistry: EndpointRegistry
+    init {
+        endpointRegistry = EndpointRegistryImpl()
+        endpointRegistry.register(RequestAction.Exit, EntryEndpoint())
     }
 
     private val channelInitializer = object : ChannelInitializer<SocketChannel>() {
@@ -35,6 +46,8 @@ class Server(
             ch.pipeline()
                 .addLast(ModbusTcpCodec(ModbusResponseEncoder(), ModbusRequestDecoder()))
                 .addLast("modbusTcpPayloadHandler", ModbusTcpPayloadHandler(writeRequestDecoder))
+                .addLast(DefaultEventExecutorGroup(5),
+                    "requestDispatchingHandler", RequestDispatchingHandler(endpointRegistry))
             // TODO: Add exception-handler Handler
         }
     }
