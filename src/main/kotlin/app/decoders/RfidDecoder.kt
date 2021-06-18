@@ -1,9 +1,10 @@
-package core.decode
+package app.decoders
 
 import io.netty.buffer.ByteBuf
 import io.netty.handler.codec.DecoderException
+import modbus.core.Decoder
 
-class RfidDecoder : WriteDataDecoder {
+class RfidDecoder : Decoder<Long> {
     override fun decode(byteBuf: ByteBuf): Long {
         if (byteBuf.readableBytes() != 8) {
             throw DecoderException()
