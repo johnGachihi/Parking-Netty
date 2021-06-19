@@ -1,3 +1,4 @@
+import app.actionMap
 import app.endpoints.RfidEndpoint
 import com.digitalpetri.modbus.codec.*
 import modbus.ModbusRequestCodec
@@ -6,13 +7,7 @@ import system.EndpointFactoryImpl
 import system.server.Server
 
 fun main() {
-//    TBT
-//    Server(port = 55124).start()
-
-    val endpointFactory = EndpointFactoryImpl(
-        mapOf(
-            40001 to RfidEndpoint()
-        ))
+    val endpointFactory = EndpointFactoryImpl(actionMap)
     val modbusRequestHandler = ModbusRequestHandler(endpointFactory)
     Server(
         address = "192.168.1.2",
