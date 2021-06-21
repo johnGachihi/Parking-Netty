@@ -1,5 +1,5 @@
 import app.actionMap
-import app.di.appModules
+import di.appModules
 import org.koin.core.context.GlobalContext.startKoin
 import server.Server
 import router.EndpointFactoryImpl

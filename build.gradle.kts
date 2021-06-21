@@ -14,6 +14,11 @@ dependencies {
     implementation("com.digitalpetri.modbus:modbus-slave-tcp:1.2.0")
     implementation("io.insert-koin:koin-core:3.1.0")
 
+    // Database
+    implementation("org.hibernate:hibernate-core:5.5.0.Final")
+    implementation("mysql:mysql-connector-java:8.0.25")
+    implementation("org.hibernate:hibernate-hikaricp:5.5.0.Final")
+
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("io.insert-koin:koin-test:3.1.0")
