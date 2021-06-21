@@ -1,4 +1,4 @@
-package system.core
+package core
 
 interface Response {
 }

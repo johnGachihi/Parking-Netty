@@ -1,9 +1,8 @@
-package system.server
+package server
 
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.MessageToMessageCodec
-import system.core.RequestCodec
-import system.core.Response
+import core.Response
 
 class ProtocolToAppRequestCodec<TO_DECODE>(
     private val requestCodec: RequestCodec<TO_DECODE>,

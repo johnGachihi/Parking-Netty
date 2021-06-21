@@ -1,9 +1,9 @@
-package modbus.core
+package core.modbus
 
 import com.digitalpetri.modbus.codec.ModbusTcpPayload
 import com.digitalpetri.modbus.requests.WriteMultipleRegistersRequest
 import io.netty.buffer.ByteBuf
-import system.core.Request
+import core.Request
 
 class ModbusWriteRequest(
     override val actionCode: Int,

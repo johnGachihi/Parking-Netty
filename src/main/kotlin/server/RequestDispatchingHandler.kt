@@ -1,9 +1,8 @@
-package system.server
+package server
 
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
-import system.core.RequestHandler
-import system.core.Request
+import core.Request
 
 class RequestDispatchingHandler(
     private val requestHandler: RequestHandler

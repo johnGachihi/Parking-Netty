@@ -1,6 +1,6 @@
-package modbus.core
+package core.modbus
 
 import com.digitalpetri.modbus.codec.ModbusTcpPayload
-import system.core.Response
+import core.Response
 
 class ModbusResponse(val modbusTcpPayload: ModbusTcpPayload) : Response

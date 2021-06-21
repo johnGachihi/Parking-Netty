@@ -1,4 +1,7 @@
-package system.core
+package server
+
+import core.Request
+import core.Response
 
 interface RequestCodec<TO_DECODE> {
     fun decode(protocolMsg: TO_DECODE): Request

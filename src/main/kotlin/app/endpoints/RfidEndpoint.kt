@@ -1,8 +1,8 @@
 package app.endpoints
 
 import app.decoders.RfidDecoder
-import modbus.WriteRequestEndpoint
-import modbus.core.Decoder
+import router.modbus.WriteRequestEndpoint
+import router.modbus.Decoder
 
 class RfidEndpoint : WriteRequestEndpoint<Long>() {
     override fun handleRequest(data: Long) {

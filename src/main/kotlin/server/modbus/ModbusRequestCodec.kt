@@ -1,12 +1,12 @@
-package modbus
+package server.modbus
 
 import com.digitalpetri.modbus.codec.ModbusTcpPayload
 import com.digitalpetri.modbus.requests.WriteMultipleRegistersRequest
-import modbus.core.ModbusResponse
-import modbus.core.ModbusWriteRequest
-import system.core.Request
-import system.core.RequestCodec
-import system.core.Response
+import core.modbus.ModbusResponse
+import core.modbus.ModbusWriteRequest
+import core.Request
+import core.Response
+import server.RequestCodec
 
 class ModbusRequestCodec : RequestCodec<ModbusTcpPayload> {
     override fun decode(protocolMsg: ModbusTcpPayload): Request {

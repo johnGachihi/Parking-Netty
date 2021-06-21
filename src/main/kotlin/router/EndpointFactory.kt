@@ -1,7 +1,8 @@
-package system
+package router
 
-import modbus.EndpointFactory
-import system.core.Endpoint
+interface EndpointFactory {
+    fun getEndpoint(actionCode: Int): Endpoint
+}
 
 class EndpointFactoryImpl(
     private val actionToEndpointMap: Map<Int, Endpoint>
@@ -11,3 +12,4 @@ class EndpointFactoryImpl(
             ?: throw UnsupportedActionException("$actionCode")
     }
 }
+

@@ -1,8 +1,9 @@
-package system.core
+package server
 
-import system.core.Request
-import system.core.Response
+import core.Request
+import core.Response
 
 interface RequestHandler {
     fun handleRequest(request: Request): Response
 }
+

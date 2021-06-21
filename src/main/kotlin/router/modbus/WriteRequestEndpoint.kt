@@ -1,14 +1,13 @@
-package modbus
+package router.modbus
 
 import com.digitalpetri.modbus.codec.ModbusTcpPayload
 import com.digitalpetri.modbus.requests.WriteMultipleRegistersRequest
 import com.digitalpetri.modbus.responses.WriteMultipleRegistersResponse
-import modbus.core.Decoder
-import modbus.core.ModbusResponse
-import modbus.core.ModbusWriteRequest
-import system.core.Endpoint
-import system.core.Request
-import system.core.Response
+import core.modbus.ModbusResponse
+import core.modbus.ModbusWriteRequest
+import router.Endpoint
+import core.Request
+import core.Response
 
 abstract class WriteRequestEndpoint<T> : Endpoint {
     override fun handleRequest(request: Request): Response {

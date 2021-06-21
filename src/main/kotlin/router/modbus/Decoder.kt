@@ -1,4 +1,4 @@
-package modbus.core
+package router.modbus
 
 import io.netty.buffer.ByteBuf
 
