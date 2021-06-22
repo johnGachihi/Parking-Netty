@@ -19,6 +19,10 @@ dependencies {
     implementation("mysql:mysql-connector-java:8.0.25")
     implementation("org.hibernate:hibernate-hikaricp:5.5.0.Final")
 
+    // Bean validation
+    implementation("javax.validation:validation-api:2.0.1.Final")
+    implementation ("org.hibernate.validator:hibernate-validator:7.0.1.Final")
+
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("io.insert-koin:koin-test:3.1.0")

@@ -1,8 +1,8 @@
 import app.actionMap
 import di.appModules
 import org.koin.core.context.GlobalContext.startKoin
-import server.Server
 import router.EndpointFactoryImpl
+import server.Server
 
 fun main() {
     startKoin {
@@ -15,15 +15,4 @@ fun main() {
         port = 55123,
         endpointFactory = endpointFactory
     ).start()
-
-
-//    val modbusRequestHandler = ModbusRequestHandler(endpointFactory)
-    /*Server(
-//        address = "192.168.1.2",
-        port = 55123,
-        requestHandler = modbusRequestHandler,
-        requestCodec = ModbusRequestCodec(),
-        protocolPayloadType = ModbusTcpPayload::class.java,
-        protocolCodec = ModbusTcpCodec(ModbusResponseEncoder(), ModbusRequestDecoder())
-    ).start()*/
 }
