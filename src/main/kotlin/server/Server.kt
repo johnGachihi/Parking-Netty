@@ -9,15 +9,13 @@ import io.netty.channel.ChannelInitializer
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioServerSocketChannel
-import router.EndpointFactory
-import router.RequestHandlerImpl
 import server.modbus.ModbusRequestCodec
 import java.net.InetSocketAddress
 
 class Server(
     private val address: String = "localhost",
     private val port: Int = 502,
-    private val endpointFactory: EndpointFactory,
+    private val requestHandler: RequestHandler
 ) {
     private val serverBootstrap = ServerBootstrap()
     private val eventLoopGroup = NioEventLoopGroup()
@@ -27,7 +25,7 @@ class Server(
             ch.pipeline()
                 .addLast(ModbusTcpCodec(ModbusResponseEncoder(), ModbusRequestDecoder()))
                 .addLast(ProtocolToAppRequestCodec(ModbusRequestCodec(), ModbusTcpPayload::class.java))
-                .addLast(RequestDispatchingHandler(RequestHandlerImpl(endpointFactory)))
+                .addLast(RequestDispatchingHandler(requestHandler))
         }
     }
 
