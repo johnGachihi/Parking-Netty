@@ -1,5 +1,8 @@
 package db
 
+import app.entities.FinishedVisit
+import app.entities.OngoingVisit
+import app.entities.Visit
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.hibernate.boot.MetadataSources
@@ -7,7 +10,7 @@ import org.hibernate.boot.registry.StandardServiceRegistry
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 
 interface HibernateSessionFactory {
-    val session: Session
+    fun createSession(): Session
 }
 
 object HibernateSessionFactoryImpl : HibernateSessionFactory {
@@ -17,12 +20,14 @@ object HibernateSessionFactoryImpl : HibernateSessionFactory {
         val standardRegistry: StandardServiceRegistry = StandardServiceRegistryBuilder()
             .build()
         val metadata = MetadataSources(standardRegistry)
+            .addAnnotatedClass(Visit::class.java)
+            .addAnnotatedClass(OngoingVisit::class.java)
+            .addAnnotatedClass(FinishedVisit::class.java)
             .buildMetadata()
         sessionFactory = metadata.buildSessionFactory()
     }
 
     init { println("${this.javaClass.name} initialized.") }
 
-    override val session: Session
-        get() = sessionFactory.openSession()
+    override fun createSession(): Session = sessionFactory.openSession()
 }
