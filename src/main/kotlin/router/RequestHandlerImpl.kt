@@ -1,33 +1,29 @@
 package router
 
-import server.RequestHandler
 import core.Request
 import core.Response
-import intercepting.InterceptorManager
+import db.HibernateSessionContextManager
+import server.RequestHandler
 
 class RequestHandlerImpl(
     private val endpointFactory: EndpointFactory,
-    private val interceptorManager: InterceptorManager,
+    private val hibernateSessionContextManager: HibernateSessionContextManager,
     private val exceptionHandler: ExceptionHandler
 ) : RequestHandler {
     override fun handleRequest(request: Request): Response {
-        val res: Response = try {
-            val req = interceptorManager.interceptRequest(request)
-            runEndpoint(req)
-        } catch (e: Exception) {
-            exceptionHandler.handleException(e, request)
-        }
+        hibernateSessionContextManager.beginSessionContext()
 
-        return try {
-            interceptorManager.interceptResponse(res)
-        } catch (e: Exception) {
-            exceptionHandler.handleException(e, request)
-        }
+        var response: Response
+        try {
+            response = runEndpoint(request)
 
-        /*val req = interceptorManager.interceptRequest(request)
-        val endpoint = endpointFactory.getEndpoint(request.actionCode)
-        val res = endpoint.handleRequest(req)
-        return interceptorManager.interceptResponse(res)*/
+            hibernateSessionContextManager.closeSessionContext()
+        } catch (e: Exception) {
+            response = exceptionHandler.handleException(e, request)
+
+            hibernateSessionContextManager.closeSessionContextExceptionally()
+        }
+        return response
     }
 
     private fun runEndpoint(request: Request): Response {

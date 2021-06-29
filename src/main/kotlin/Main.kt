@@ -1,7 +1,6 @@
 import app.actionMap
-import app.interceptors.interceptorChain
+import db.HibernateSessionContextManagerImpl
 import di.appModules
-import intercepting.InterceptorManagerImpl
 import org.koin.core.context.GlobalContext.startKoin
 import router.EndpointFactoryImpl
 import router.ExceptionHandlerImpl
@@ -13,7 +12,7 @@ fun main() {
 
     val requestHandler = RequestHandlerImpl(
         EndpointFactoryImpl(actionMap),
-        InterceptorManagerImpl(interceptorChain),
+        HibernateSessionContextManagerImpl,
         ExceptionHandlerImpl()
     )
     Server(
