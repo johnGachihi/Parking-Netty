@@ -11,7 +11,6 @@ import core.Response
 
 abstract class WriteRequestEndpoint<T> : Endpoint {
     override fun handleRequest(request: Request): Response {
-        println(request.actionCode)
         request as ModbusWriteRequest
         val decodedData = createDecoder().decode(request.data)
         handleRequest(decodedData)

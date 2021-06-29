@@ -9,6 +9,7 @@ import io.netty.channel.ChannelInitializer
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioServerSocketChannel
+import io.netty.util.concurrent.DefaultEventExecutorGroup
 import server.modbus.ModbusRequestCodec
 import java.net.InetSocketAddress
 
@@ -25,7 +26,7 @@ class Server(
             ch.pipeline()
                 .addLast(ModbusTcpCodec(ModbusResponseEncoder(), ModbusRequestDecoder()))
                 .addLast(ProtocolToAppRequestCodec(ModbusRequestCodec(), ModbusTcpPayload::class.java))
-                .addLast(RequestDispatchingHandler(requestHandler))
+                .addLast(DefaultEventExecutorGroup(3), RequestDispatchingHandler(requestHandler))
         }
     }
 

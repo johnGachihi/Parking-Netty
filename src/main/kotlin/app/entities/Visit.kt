@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 open class Visit {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     open var id: Long? = null
 
     @NotNull
