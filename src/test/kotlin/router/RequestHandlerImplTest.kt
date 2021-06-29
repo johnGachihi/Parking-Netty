@@ -22,6 +22,9 @@ internal class RequestHandlerImplTest {
     @RelaxedMockK
     lateinit var endpointFactory: EndpointFactory
 
+    @RelaxedMockK
+    lateinit var exceptionHandler: ExceptionHandler
+
     @InjectMockKs
     lateinit var requestHandler: RequestHandlerImpl
 
