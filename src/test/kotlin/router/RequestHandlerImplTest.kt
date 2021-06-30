@@ -1,16 +1,13 @@
 package router
 
-import core.Request
 import core.Response
 import createMockRequest
+import createMockResponse
 import db.HibernateSessionContextManager
-import intercepting.InterceptorManager
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.mockk
-import io.mockk.verify
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -19,44 +16,108 @@ import org.junit.jupiter.api.extension.ExtendWith
 internal class RequestHandlerImplTest {
     @RelaxedMockK
     lateinit var hibernateSessionContextManager: HibernateSessionContextManager
-
     @RelaxedMockK
     lateinit var endpointFactory: EndpointFactory
-
     @RelaxedMockK
     lateinit var exceptionHandler: ExceptionHandler
-
     @InjectMockKs
     lateinit var requestHandler: RequestHandlerImpl
 
     @Test
-    fun `handleRequest calls EndpointFactory#getEndpoint once`() {
+    fun `Uses EndpointFactory to get Endpoint using the received Request's action-code`() {
+        val actionCode = 192
+        val request = createMockRequest(withActionCode = actionCode)
+
+        requestHandler.handleRequest(request)
+
+        verify(exactly = 1) { endpointFactory.getEndpoint(actionCode) }
+    }
+
+    @Test
+    fun `Uses the Endpoint returned by EndpointFactory to handle the received Request`() {
+        val endpoint = mockk<Endpoint>(relaxed = true)
+        every { endpointFactory.getEndpoint(any()) } returns endpoint
+
+        val request = createMockRequest()
+        requestHandler.handleRequest(request)
+
+        verify(exactly = 1) { endpoint.handleRequest(request) }
+    }
+
+    @Test
+    fun `When exception is thrown when handling a Request, then ExceptionHandler is passed the exception thrown and Request being handled`() {
+        val thrownException = Exception()
+        makeRequestHandlingThrowException(exception = thrownException)
+
+        val requestBeingHandled = createMockRequest()
+        requestHandler.handleRequest(requestBeingHandled)
+
+        verify(exactly = 1) { exceptionHandler.handleException(thrownException, requestBeingHandled) }
+    }
+
+    @Test
+    fun `When exception is thrown when handling a Request, the ExceptionHandler is used to create the returned Response`() {
+        makeRequestHandlingThrowException()
+
+        val responseFromExceptionHandler = createMockResponse()
+        makeExceptionHandlerReturn(responseFromExceptionHandler)
+
+        assertRequestHandlerReturns(responseFromExceptionHandler)
+    }
+
+    @Test
+    fun `When Request is handled successfully, then the used Endpoint's Response is returned`() {
+        val endpoint = mockk<Endpoint>(relaxed = true)
+        val responseFromEndpoint = createMockResponse()
+        every { endpoint.handleRequest(any()) } returns responseFromEndpoint
+
+        every { endpointFactory.getEndpoint(any()) } returns endpoint
+
+        assertRequestHandlerReturns(responseFromEndpoint)
+    }
+
+    @Test
+    fun `Begins hibernate session context, before attempting to handling request`() {
         requestHandler.handleRequest(createMockRequest())
 
-        verify(exactly = 1) {
+        verifyOrder {
+            hibernateSessionContextManager.beginSessionContext()
             endpointFactory.getEndpoint(any())
         }
     }
 
     @Test
-    fun `handleRequest calls EndpointFactory#getEndpoint with the action-code from the request it received`() {
-        val expectedActionCode = 123
+    fun `Closes hibernate session context, after Request is handled`() {
+        requestHandler.handleRequest(createMockRequest())
 
-        requestHandler.handleRequest(
-            createMockRequest(withActionCode = expectedActionCode))
-
-        verify {
-            endpointFactory.getEndpoint(expectedActionCode)
+        verifyOrder {
+            endpointFactory.getEndpoint(any())
+            hibernateSessionContextManager.closeSessionContext()
         }
     }
 
     @Test
-    fun `handleRequest calls Endpoint returned by EndpointFactory#getEndpoint once`() {
-        val endpoint = mockk<Endpoint>(relaxed = true)
-        every { endpointFactory.getEndpoint(any()) } returns endpoint
+    fun `Closes hibernate session context exceptionally, if an exception is thrown when a Request is being handled`() {
+        makeRequestHandlingThrowException()
 
         requestHandler.handleRequest(createMockRequest())
 
-        verify(exactly = 1) { endpoint.handleRequest(any()) }
+        verify {
+            hibernateSessionContextManager.closeSessionContextExceptionally()
+        }
+    }
+
+    private fun makeRequestHandlingThrowException(exception: Exception = Exception()) {
+        every { endpointFactory.getEndpoint(any()) } throws exception
+    }
+
+    private fun makeExceptionHandlerReturn(returns: Response = createMockResponse()) {
+        every { exceptionHandler.handleException(any(), any()) } returns returns
+    }
+
+    private fun assertRequestHandlerReturns(response: Response) {
+        assertEquals(
+            response,
+            requestHandler.handleRequest(createMockRequest()))
     }
 }

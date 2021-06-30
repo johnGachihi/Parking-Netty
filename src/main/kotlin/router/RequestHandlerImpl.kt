@@ -13,17 +13,19 @@ class RequestHandlerImpl(
     override fun handleRequest(request: Request): Response {
         hibernateSessionContextManager.beginSessionContext()
 
-        var response: Response
-        try {
-            response = runEndpoint(request)
+        return try {
+            val response = runEndpoint(request)
 
             hibernateSessionContextManager.closeSessionContext()
+
+            response
         } catch (e: Exception) {
-            response = exceptionHandler.handleException(e, request)
+            val response = exceptionHandler.handleException(e, request)
 
             hibernateSessionContextManager.closeSessionContextExceptionally()
+
+            response
         }
-        return response
     }
 
     private fun runEndpoint(request: Request): Response {
