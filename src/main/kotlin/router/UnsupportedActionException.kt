@@ -1,3 +1,3 @@
 package router
 
-class UnsupportedActionException(s: String?) : Exception(s)
+class UnsupportedActionException(s: String? = null) : Exception(s)

@@ -26,7 +26,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("io.insert-koin:koin-test:3.1.0")
-    implementation("io.mockk:mockk:1.11.0")
+    testImplementation("io.insert-koin:koin-test-junit5:3.1.0")
+    testImplementation("io.mockk:mockk:1.11.0")
     testImplementation("com.h2database:h2:1.4.200")
 
 }
