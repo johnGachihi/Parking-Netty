@@ -1,13 +1,7 @@
 package db
 
-import app.entities.FinishedVisit
-import app.entities.OngoingVisit
-import app.entities.Visit
 import org.hibernate.Session
 import org.hibernate.SessionFactory
-import org.hibernate.boot.MetadataSources
-import org.hibernate.boot.registry.StandardServiceRegistry
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import org.hibernate.context.internal.ManagedSessionContext
 
 interface HibernateSessionContextManager {
@@ -18,18 +12,7 @@ interface HibernateSessionContextManager {
 }
 
 object HibernateSessionContextManagerImpl : HibernateSessionContextManager {
-    private val sessionFactory: SessionFactory
-
-    init {
-        val standardRegistry: StandardServiceRegistry = StandardServiceRegistryBuilder()
-            .build()
-        val metadata = MetadataSources(standardRegistry)
-            .addAnnotatedClass(Visit::class.java)
-            .addAnnotatedClass(OngoingVisit::class.java)
-            .addAnnotatedClass(FinishedVisit::class.java)
-            .buildMetadata()
-        sessionFactory = metadata.buildSessionFactory()
-    }
+    private val sessionFactory: SessionFactory = createHibernateSessionFactory()
 
     init { println("${this.javaClass.name} initialized.") }
 
