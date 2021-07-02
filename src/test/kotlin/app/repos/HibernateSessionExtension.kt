@@ -6,15 +6,21 @@ import org.hibernate.SessionFactory
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.api.extension.TestInstancePostProcessor
 
-class HibernateSessionExtension : BeforeEachCallback, AfterEachCallback {
+class HibernateSessionExtension : BeforeEachCallback, AfterEachCallback, TestInstancePostProcessor {
     private lateinit var sessionFactory: SessionFactory
     private lateinit var session: Session
 
-    override fun beforeEach(context: ExtensionContext) {
+    override fun postProcessTestInstance(testInstance: Any, context: ExtensionContext) {
         initSession()
 
-        injectSession(context.requiredTestInstance)
+        injectSession(testInstance)
+    }
+
+    override fun beforeEach(context: ExtensionContext) {
+        if (!session.isOpen)
+            initSession()
     }
 
     override fun afterEach(context: ExtensionContext?) {
