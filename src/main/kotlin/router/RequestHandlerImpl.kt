@@ -7,7 +7,7 @@ import server.RequestHandler
 
 class RequestHandlerImpl(
     private val endpointFactory: EndpointFactory,
-    private val hibernateSessionContextManager: HibernateSessionContextManager,
+    private val hibernateSessionContextManager: HibernateSessionContextManager, // Smell
     private val exceptionHandler: ExceptionHandler
 ) : RequestHandler {
     override fun handleRequest(request: Request): Response {

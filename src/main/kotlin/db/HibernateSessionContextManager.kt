@@ -37,5 +37,6 @@ object HibernateSessionContextManagerImpl : HibernateSessionContextManager {
         ManagedSessionContext.unbind(sessionFactory)
     }
 
+    // TODO: Make `currentSession` variable.
     override fun getCurrentSession(): Session = sessionFactory.currentSession
 }
