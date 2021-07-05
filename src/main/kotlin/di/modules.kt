@@ -24,9 +24,9 @@ val appModules = module {
     single<ExceptionHandler> { ExceptionHandlerImpl() }
 
     // App modules
-    single { EntryEndpoint(get()) }
-    single<EntryService> { EntryServiceImpl(get()) }
-    single<VisitRepository> { VisitRepositoryImpl(get()) }
+    factory { EntryEndpoint(get()) }
+    factory<EntryService> { EntryServiceImpl(get()) }
+    factory<VisitRepository> { VisitRepositoryImpl(get()) }
 
     single { RfidEndpoint() }
 }
