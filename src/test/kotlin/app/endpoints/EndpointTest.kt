@@ -1,5 +1,7 @@
 package app.endpoints
 
+import com.digitalpetri.modbus.ExceptionCode
+import com.digitalpetri.modbus.responses.ExceptionResponse
 import core.modbus.ModbusResponse
 import db.HibernateSessionContextManager
 import di.appModules
@@ -15,6 +17,9 @@ import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.koin.test.junit5.KoinTestExtension
 import org.koin.test.junit5.mock.MockProviderExtension
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @ExtendWith(MockKExtension::class)
 open class EndpointTest : KoinTest {
@@ -35,7 +40,7 @@ open class EndpointTest : KoinTest {
     @RegisterExtension
     @JvmField
     val koinMockProvider = MockProviderExtension.create {
-        mockkClass(it)
+        mockkClass(it, relaxed = true)
     }
 
     protected val mockServer: MockServer by inject()
@@ -47,11 +52,20 @@ open class EndpointTest : KoinTest {
 
     class ModbusResponseAssertions(private val response: ModbusResponse) {
         fun assertOk() {
-            TODO("... ")
+            assertFalse(isExceptional(), "Expected Modbus Response to be Ok but is exceptional.")
         }
 
-        fun assertExceptional() {
-            TODO("... ")
+        fun assertExceptional(exceptionCode: ExceptionCode? = null) {
+            assertTrue(isExceptional(), "Expected Modbus Response to be exceptional but is OK.")
+
+            if (exceptionCode != null) {
+                val pdu = response.modbusTcpPayload.modbusPdu as ExceptionResponse
+                assertEquals(exceptionCode, pdu.exceptionCode)
+            }
+        }
+
+        private fun isExceptional(): Boolean {
+            return response.modbusTcpPayload.modbusPdu is ExceptionResponse
         }
     }
 }
