@@ -18,14 +18,16 @@ object HibernateSessionContextManagerImpl : HibernateSessionContextManager {
 
     override fun beginSessionContext() {
         val session = sessionFactory.openSession()
-        session.beginTransaction()
+        session.transaction.begin()
 
         ManagedSessionContext.bind(session)
     }
 
     override fun closeSessionContext() {
         val currentSession = sessionFactory.currentSession
+        currentSession.flush()
         currentSession.transaction.commit()
+        currentSession.close()
 
         ManagedSessionContext.unbind(sessionFactory)
     }
@@ -33,6 +35,7 @@ object HibernateSessionContextManagerImpl : HibernateSessionContextManager {
     override fun closeSessionContextExceptionally() {
         val currentSession = sessionFactory.currentSession
         currentSession.transaction.rollback()
+        currentSession.close()
 
         ManagedSessionContext.unbind(sessionFactory)
     }
