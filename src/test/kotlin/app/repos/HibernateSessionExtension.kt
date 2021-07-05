@@ -13,7 +13,8 @@ class HibernateSessionExtension : BeforeEachCallback, AfterEachCallback, TestIns
     private lateinit var session: Session
 
     override fun postProcessTestInstance(testInstance: Any, context: ExtensionContext) {
-        initSession()
+        if (!::session.isInitialized || !session.isOpen)
+            initSession()
 
         injectSession(testInstance)
     }
