@@ -7,6 +7,7 @@ import core.Request
 import core.Response
 import core.modbus.ModbusResponse
 import core.modbus.ModbusWriteRequest
+import io.netty.handler.codec.DecoderException
 
 interface ExceptionHandler {
     fun handleException(exc: Exception, req: Request): Response
@@ -14,13 +15,22 @@ interface ExceptionHandler {
 
 class ExceptionHandlerImpl : ExceptionHandler {
     override fun handleException(exc: Exception, req: Request): Response {
+        exc.printStackTrace()
         req as ModbusWriteRequest
         val modbusPayload = req.modbusTcpPayload
 
-        val responsePdu = ExceptionResponse(
-            modbusPayload.modbusPdu.functionCode,
-            ExceptionCode.SlaveDeviceFailure
-        )
+        val responsePdu = if (exc is DecoderException) {
+            ExceptionResponse(
+                modbusPayload.modbusPdu.functionCode,
+                ExceptionCode.IllegalDataValue
+            )
+        } else {
+            ExceptionResponse(
+                modbusPayload.modbusPdu.functionCode,
+                ExceptionCode.SlaveDeviceFailure
+            )
+        }
+
         val modbusTcpPayload = ModbusTcpPayload(
             modbusPayload.transactionId,
             modbusPayload.unitId,
