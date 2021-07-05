@@ -1,6 +1,6 @@
 package di
 
-import app.actionMap1
+import app.actionMap
 import app.endpoints.EntryEndpoint
 import app.endpoints.RfidEndpoint
 import app.repos.VisitRepository
@@ -19,7 +19,7 @@ val appModules = module {
     // System modules
     factory<Session> { HibernateSessionContextManagerImpl.getCurrentSession() }
     single<RequestHandler> { RequestHandlerImpl(get(), get(), get()) }
-    single<EndpointFactory> { KoinEndpointFactory(actionMap1) }
+    single<EndpointFactory> { KoinEndpointFactory(actionMap) }
     single<HibernateSessionContextManager> { HibernateSessionContextManagerImpl }
     single<ExceptionHandler> { ExceptionHandlerImpl() }
 

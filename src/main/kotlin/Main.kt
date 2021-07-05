@@ -2,8 +2,8 @@ import app.actionMap
 import db.HibernateSessionContextManagerImpl
 import di.appModules
 import org.koin.core.context.GlobalContext.startKoin
-import router.EndpointFactoryImpl
 import router.ExceptionHandlerImpl
+import router.KoinEndpointFactory
 import router.RequestHandlerImpl
 import server.Server
 
@@ -11,7 +11,7 @@ fun main() {
     startKoin { modules(appModules) }
 
     val requestHandler = RequestHandlerImpl(
-        EndpointFactoryImpl(actionMap),
+        KoinEndpointFactory(actionMap),
         HibernateSessionContextManagerImpl,
         ExceptionHandlerImpl()
     )
