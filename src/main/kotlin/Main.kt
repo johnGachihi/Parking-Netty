@@ -7,6 +7,7 @@ import router.KoinEndpointFactory
 import router.RequestHandlerImpl
 import server.Server
 
+// TODO: use KoinComponent
 fun main() {
     startKoin { modules(appModules) }
 

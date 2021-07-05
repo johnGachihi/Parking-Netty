@@ -6,7 +6,7 @@ import db.HibernateSessionContextManager
 import server.RequestHandler
 
 class RequestHandlerImpl(
-    private val endpointFactory: EndpointFactory,
+    private val endpointFactory: EndpointFactory, // TODO: Create Router to find and run Endpoint
     private val hibernateSessionContextManager: HibernateSessionContextManager, // Smell
     private val exceptionHandler: ExceptionHandler
 ) : RequestHandler {

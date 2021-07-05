@@ -44,11 +44,11 @@ internal class VisitRepositoryTest {
         }
     }
 
-    /*@Test
+    @Test
     fun `Test saveOngoingVisit`() {
         val id = visitRepository.saveOnGoingVisit(
             OngoingVisit().apply { ticketCode = 123 })
 
         assertNotNull(session.get(OngoingVisit::class.java, id))
-    }*/
+    }
 }

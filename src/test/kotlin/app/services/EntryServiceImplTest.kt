@@ -29,7 +29,7 @@ internal class EntryServiceImplTest {
             entryService.addVisit(ticketCode)
         }
         assertEquals(
-            "The ticket code provided is already in use.",
+            "The ticket code provided ($ticketCode) is already in use.",
             exception.message
         )
     }

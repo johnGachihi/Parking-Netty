@@ -23,7 +23,7 @@ val appModules = module {
     single<HibernateSessionContextManager> { HibernateSessionContextManagerImpl }
     single<ExceptionHandler> { ExceptionHandlerImpl() }
 
-    // App modules
+    // App modules. TODO: Separate from system modules
     factory { EntryEndpoint(get()) }
     factory<EntryService> { EntryServiceImpl(get()) }
     factory<VisitRepository> { VisitRepositoryImpl(get()) }

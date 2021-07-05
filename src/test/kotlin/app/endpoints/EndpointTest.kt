@@ -43,7 +43,7 @@ open class EndpointTest : KoinTest {
         mockkClass(it, relaxed = true)
     }
 
-    protected val mockServer: MockServer by inject()
+    private val mockServer: MockServer by inject()
 
     protected fun sendModbusWriteRequest(address: Int, data: ByteBuf): ModbusResponseAssertions {
         val response = mockServer.sendModbusWriteRequest(address, data)

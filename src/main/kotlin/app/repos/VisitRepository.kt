@@ -17,9 +17,9 @@ class VisitRepositoryImpl(
 
     override fun onGoingVisitExistsWithTicketCode(ticketCode: Long): Boolean {
         val count: Long = session.createQuery(
-    "SELECT count(v) " +
-            "FROM OngoingVisit v " +
-            "WHERE v.ticketCode = :ticketCode"
+            "SELECT count(v) " +
+                    "FROM OngoingVisit v " +
+                    "WHERE v.ticketCode = :ticketCode"
         )
             .setParameter("ticketCode", ticketCode)
             .uniqueResult() as Long
