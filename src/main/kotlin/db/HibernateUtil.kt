@@ -2,6 +2,7 @@ package db
 
 import app.entities.FinishedVisit
 import app.entities.OngoingVisit
+import app.entities.Payment
 import app.entities.Visit
 import org.hibernate.SessionFactory
 import org.hibernate.boot.MetadataSources
@@ -15,6 +16,7 @@ fun createHibernateSessionFactory(): SessionFactory {
         .addAnnotatedClass(Visit::class.java)
         .addAnnotatedClass(OngoingVisit::class.java)
         .addAnnotatedClass(FinishedVisit::class.java)
+        .addAnnotatedClass(Payment::class.java)
         .buildMetadata()
     return metadata.buildSessionFactory()
 }

@@ -18,6 +18,9 @@ open class Visit {
 
     @NotNull
     open var ticketCode: Long = 0L
+
+    @OneToMany(mappedBy = "visit", cascade = [CascadeType.ALL], orphanRemoval = true)
+    open val payments: List<Payment> = emptyList()
 }
 
 @Entity
