@@ -1,5 +1,7 @@
 import core.Request
 import core.Response
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 fun createMockRequest(withActionCode: Int? = null): Request {
     return object : Request {
@@ -10,3 +12,6 @@ fun createMockRequest(withActionCode: Int? = null): Request {
 fun createMockResponse(): Response {
     return object : Response {}
 }
+
+val Int.minutesAgo: Instant
+    get() = Instant.now().minus(this.toLong(), ChronoUnit.MINUTES)

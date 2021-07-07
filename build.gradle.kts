@@ -23,13 +23,17 @@ dependencies {
     implementation("javax.validation:validation-api:2.0.1.Final")
     implementation ("org.hibernate.validator:hibernate-validator:7.0.1.Final")
 
+    // Caching
+    implementation("org.hibernate:hibernate-jcache:5.5.0.Final")
+    implementation("org.ehcache:ehcache:3.9.4")
+
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("io.insert-koin:koin-test:3.1.0")
     testImplementation("io.insert-koin:koin-test-junit5:3.1.0")
     testImplementation("io.mockk:mockk:1.11.0")
     testImplementation("com.h2database:h2:1.4.200")
-
+    testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.5.10")
 }
 
 tasks.getByName<Test>("test") {
