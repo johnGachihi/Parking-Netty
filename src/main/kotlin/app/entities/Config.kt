@@ -21,4 +21,4 @@ open class Config {
 
 @Entity
 @Table(name = "parking_fee_configuration")
-open class ParkingFeeConfigModel : Config()
+open class ParkingFeeConfig : Config()
