@@ -1,9 +1,6 @@
 package db
 
-import app.entities.FinishedVisit
-import app.entities.OngoingVisit
-import app.entities.Payment
-import app.entities.Visit
+import app.entities.*
 import org.hibernate.SessionFactory
 import org.hibernate.boot.MetadataSources
 import org.hibernate.boot.registry.StandardServiceRegistry
@@ -17,6 +14,8 @@ fun createHibernateSessionFactory(): SessionFactory {
         .addAnnotatedClass(OngoingVisit::class.java)
         .addAnnotatedClass(FinishedVisit::class.java)
         .addAnnotatedClass(Payment::class.java)
+        .addAnnotatedClass(Config::class.java)
+        .addAnnotatedClass(ParkingFeeConfig::class.java)
         .buildMetadata()
     return metadata.buildSessionFactory()
 }
