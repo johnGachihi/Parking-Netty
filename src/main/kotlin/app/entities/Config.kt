@@ -19,6 +19,7 @@ open class Config {
     open lateinit var value: String
 }
 
+// TODO: See why the @Table annotation causes warning when bootstrapping Hibernate
 @Entity
 @Table(name = "parking_fee_configuration")
 open class ParkingFeeConfig : Config()

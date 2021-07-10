@@ -1,5 +1,5 @@
 package app.utils
 
 @JvmInline
-value class Minutes(private val minutes: Int) {
+value class Minutes(val minutes: Int) {
 }

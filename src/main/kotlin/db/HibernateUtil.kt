@@ -16,6 +16,7 @@ fun createHibernateSessionFactory(): SessionFactory {
         .addAnnotatedClass(Payment::class.java)
         .addAnnotatedClass(Config::class.java)
         .addAnnotatedClass(ParkingFeeConfig::class.java)
+        .addAnnotatedClass(ParkingTariff::class.java)
         .buildMetadata()
     return metadata.buildSessionFactory()
 }
