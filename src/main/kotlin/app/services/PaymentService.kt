@@ -3,10 +3,9 @@ package app.services
 import app.entities.OngoingVisit
 import app.entities.Payment
 import app.repos.ParkingFeeConfigRepo
-import app.utils.Minutes
+import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.concurrent.TimeUnit
 
 interface PaymentService {
     fun calculateFee(ongoingVisit: OngoingVisit): Double
@@ -30,7 +29,7 @@ class PaymentServiceImpl(
         }
     }
 
-    private fun calculateFee(timeOfStay: Minutes): Double {
+    private fun calculateFee(timeOfStay: Duration): Double {
         val overlappingTariff = parkingTariffService.getOverlappingTariff(timeOfStay)
         return if (overlappingTariff != null)
             overlappingTariff.fee
@@ -39,10 +38,11 @@ class PaymentServiceImpl(
         }
     }
 
-    private fun getTimeOfStay(ongoingVisit: OngoingVisit) =
-        Minutes(
-            ongoingVisit.entryTime.until(Instant.now(), ChronoUnit.MINUTES).toInt()
-        )
+    private fun getTimeOfStay(ongoingVisit: OngoingVisit): Duration {
+        val minutesSinceEntry: Long =
+            ongoingVisit.entryTime.until(Instant.now(), ChronoUnit.MINUTES)
+        return Duration.ofMinutes(minutesSinceEntry)
+    }
 
     private fun getTotalAmountPaid(ongoingVisit: OngoingVisit) =
         ongoingVisit.payments.fold(0.0) { acc, payment -> acc + payment.amount!! }
@@ -58,7 +58,7 @@ class PaymentServiceImpl(
 
     private fun isExpired(payment: Payment): Boolean {
         val timeSincePayment = payment.madeAt.until(Instant.now(), ChronoUnit.MINUTES)
-        val expirationTimeSpan = parkingFeeConfigRepo.paymentExpirationTimeSpan.minutes
-        return  timeSincePayment >expirationTimeSpan
+        val expirationTimeSpan = parkingFeeConfigRepo.paymentExpirationTimeSpan.toMinutes()
+        return  timeSincePayment > expirationTimeSpan
     }
 }

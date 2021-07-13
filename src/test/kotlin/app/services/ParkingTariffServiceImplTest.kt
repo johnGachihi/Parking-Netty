@@ -2,7 +2,6 @@ package app.services
 
 import app.entities.ParkingTariff
 import app.repos.ParkingTariffRepo
-import app.utils.Minutes
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -13,6 +12,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.time.Duration
 
 @ExtendWith(MockKExtension::class)
 internal class ParkingTariffServiceImplTest {
@@ -34,26 +34,26 @@ internal class ParkingTariffServiceImplTest {
                 every {
                     parkingTariffRepo.getAllInAscendingOrder()
                 } returns listOf(
-                    makeParkingTariff(1, Minutes(10)),
-                    makeParkingTariff(2, Minutes(20)),
-                    makeParkingTariff(3, Minutes(30)),
+                    makeParkingTariff(1, Duration.ofMinutes(10)),
+                    makeParkingTariff(2, Duration.ofMinutes(20)),
+                    makeParkingTariff(3, Duration.ofMinutes(30)),
                 )
             }
 
             @Test
             fun `Returns first tariff with a larger upperLimit than the duration provided`() {
-                var tariff = parkingTariffService.getOverlappingTariff(Minutes(9))
+                var tariff = parkingTariffService.getOverlappingTariff(Duration.ofMinutes(9))
                 assertNotNull(tariff)
                 assertEquals(1, tariff!!.id)
 
-                tariff = parkingTariffService.getOverlappingTariff(Minutes(22))
+                tariff = parkingTariffService.getOverlappingTariff(Duration.ofMinutes(22))
                 assertNotNull(tariff)
                 assertEquals(3, tariff!!.id)
             }
 
             @Test
             fun `and when duration is larger than the upperLimit for all tariffs, then returns null`() {
-                val tariff = parkingTariffService.getOverlappingTariff(Minutes(100))
+                val tariff = parkingTariffService.getOverlappingTariff(Duration.ofMinutes(100))
                 assertNull(tariff)
             }
         }
@@ -62,7 +62,7 @@ internal class ParkingTariffServiceImplTest {
         fun `When there is no parking tariff data, then returns null`() {
             every { parkingTariffRepo.getAllInAscendingOrder() } returns emptyList()
 
-            assertNull(parkingTariffService.getOverlappingTariff(Minutes(1)))
+            assertNull(parkingTariffService.getOverlappingTariff(Duration.ofMinutes(1)))
         }
     }
 
@@ -78,9 +78,9 @@ internal class ParkingTariffServiceImplTest {
                 every {
                     parkingTariffRepo.getAllInAscendingOrder()
                 } returns listOf(
-                    makeParkingTariff(1, Minutes(10)),
-                    makeParkingTariff(2, Minutes(20)),
-                    makeParkingTariff(3, Minutes(30)),
+                    makeParkingTariff(1, Duration.ofMinutes(10)),
+                    makeParkingTariff(2, Duration.ofMinutes(20)),
+                    makeParkingTariff(3, Duration.ofMinutes(30)),
                 )
             }
 
@@ -101,7 +101,7 @@ internal class ParkingTariffServiceImplTest {
         }
     }
 
-    private fun makeParkingTariff(id: Long, upperLimit: Minutes) =
+    private fun makeParkingTariff(id: Long, upperLimit: Duration) =
         ParkingTariff().apply {
             this.id = id
             this.upperLimit = upperLimit

@@ -1,15 +1,16 @@
 package app.repos
 
 import app.entities.ParkingTariff
-import app.utils.Minutes
 import org.hibernate.Session
 import org.hibernate.SessionFactory
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.time.Duration
 
 @ExtendWith(HibernateSessionExtension::class)
 internal class HibernateParkingTariffRepoTest {
@@ -33,9 +34,9 @@ internal class HibernateParkingTariffRepoTest {
 
         @Test
         fun `When there is parking tariff data, then returns it in ascending order of 'upperLimit'`() {
-            val idOne = saveParkingTariff(upperLimit = Minutes(1))
-            val idTwo = saveParkingTariff(upperLimit = Minutes(3))
-            val idThree = saveParkingTariff(upperLimit = Minutes(2))
+            val idOne = saveParkingTariff(upperLimit = Duration.ofMinutes(1))
+            val idTwo = saveParkingTariff(upperLimit = Duration.ofMinutes(3))
+            val idThree = saveParkingTariff(upperLimit = Duration.ofMinutes(2))
             session.flush()
 
             val parkingTariffs = hibernateParkingTariffRepo.getAllInAscendingOrder()
@@ -74,7 +75,7 @@ internal class HibernateParkingTariffRepoTest {
         }
     }
 
-    private fun saveParkingTariff(upperLimit: Minutes): Long {
+    private fun saveParkingTariff(upperLimit: Duration): Long {
         return session.save(
             ParkingTariff().apply {
                 this.upperLimit = upperLimit

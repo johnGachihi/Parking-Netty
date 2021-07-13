@@ -1,9 +1,8 @@
 package app.entities
 
-import app.utils.Minutes
-import org.hibernate.Hibernate
 import org.hibernate.annotations.Cache
 import org.hibernate.annotations.CacheConcurrencyStrategy
+import java.time.Duration
 import javax.persistence.*
 import javax.validation.constraints.Min
 
@@ -17,7 +16,7 @@ open class ParkingTariff {
 
     @Min(1)
     @Column(unique = true)
-    open var upperLimit: Minutes = Minutes(-1) // Risky?
+    open var upperLimit: Duration = Duration.ofMinutes(0) //TODO: make lateinit
 
     @Column(nullable = false)
     open var fee: Double = 0.0

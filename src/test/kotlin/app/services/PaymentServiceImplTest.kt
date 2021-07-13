@@ -4,22 +4,20 @@ import app.entities.OngoingVisit
 import app.entities.ParkingTariff
 import app.entities.Payment
 import app.repos.ParkingFeeConfigRepo
-import app.utils.Minutes
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import minutesAgo
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.time.Duration
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
@@ -55,7 +53,7 @@ internal class PaymentServiceImplTest {
             paymentService.calculateFee(ongoingVisit)
 
             verify {
-                parkingTariffService.getOverlappingTariff(Minutes(22))
+                parkingTariffService.getOverlappingTariff(Duration.ofMinutes(22))
             }
         }
 
@@ -65,7 +63,7 @@ internal class PaymentServiceImplTest {
                 entryTime = 22.minutesAgo
             }
             every {
-                parkingTariffService.getOverlappingTariff(Minutes(22))
+                parkingTariffService.getOverlappingTariff(Duration.ofMinutes(22))
             } returns makeParkingTariff(fee = 1234.0)
 
             val fee = paymentService.calculateFee(ongoingVisit)
@@ -81,7 +79,7 @@ internal class PaymentServiceImplTest {
                 val ongoingVisit = OngoingVisit().apply {
                     entryTime = 22.minutesAgo
                 }
-                every { parkingTariffService.getOverlappingTariff(Minutes(22)) } returns null
+                every { parkingTariffService.getOverlappingTariff(Duration.ofMinutes(22)) } returns null
                 every { parkingTariffService.getHighestTariff() } returns makeParkingTariff(fee = 1234.0)
 
                 val fee = paymentService.calculateFee(ongoingVisit)
@@ -94,7 +92,7 @@ internal class PaymentServiceImplTest {
                 val ongoingVisit = OngoingVisit().apply {
                     entryTime = 22.minutesAgo
                 }
-                every { parkingTariffService.getOverlappingTariff(Minutes(22)) } returns null
+                every { parkingTariffService.getOverlappingTariff(Duration.ofMinutes(22)) } returns null
                 every { parkingTariffService.getHighestTariff() } returns null
 
                 val fee = paymentService.calculateFee(ongoingVisit)
@@ -122,12 +120,12 @@ internal class PaymentServiceImplTest {
                 )
             }
             every {
-                parkingTariffService.getOverlappingTariff(Minutes(20))
+                parkingTariffService.getOverlappingTariff(Duration.ofMinutes(20))
             } returns makeParkingTariff(fee = 1234.0)
 
             every {
                 parkingFeeConfigRepo.paymentExpirationTimeSpan
-            } returns returnValueClass(Minutes(1))
+            } returns Duration.ofMinutes(1)
 
             val fee = paymentService.calculateFee(ongoingVisit)
 
@@ -145,7 +143,7 @@ internal class PaymentServiceImplTest {
             }
             every {
                 parkingFeeConfigRepo.paymentExpirationTimeSpan
-            } returns returnValueClass(Minutes(21))
+            } returns Duration.ofMinutes(21)
 
             val fee = paymentService.calculateFee(ongoingVisit)
 
@@ -153,7 +151,7 @@ internal class PaymentServiceImplTest {
         }
     }
 
-    private fun makeParkingTariff(upperLimit: Minutes = Minutes(1), fee: Double) =
+    private fun makeParkingTariff(upperLimit: Duration = Duration.ofMinutes(1), fee: Double) =
         ParkingTariff().apply {
             this.upperLimit = upperLimit
             this.fee = fee

@@ -1,14 +1,16 @@
 package app.repos
 
-import app.utils.Minutes
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
-import java.lang.NumberFormatException
+import java.time.Duration
 import kotlin.test.assertIs
 
 @ExtendWith(MockKExtension::class)
@@ -27,7 +29,7 @@ internal class ParkingFeeConfigRepoImplTest {
             setConfiguration("payment_expiration_time_span", null)
 
             assertEquals(
-                Minutes(20), // Default
+                Duration.ofMinutes(20), // Default
                 parkingFeeConfigRepo.paymentExpirationTimeSpan
             )
         }
@@ -44,7 +46,7 @@ internal class ParkingFeeConfigRepoImplTest {
                     parkingFeeConfigRepo.paymentExpirationTimeSpan
                 }
                 assertEquals(
-                    "Invalid `Payment expiration time span` setting ($value). Not an integer.",
+                    "Invalid `Payment expiration time span` setting ($value). Not a number.",
                     exception.message
                 )
                 assertIs<NumberFormatException>(exception.cause)
@@ -55,8 +57,8 @@ internal class ParkingFeeConfigRepoImplTest {
                 setConfiguration("payment_expiration_time_span", "100")
 
                 assertEquals(
+                    Duration.ofMinutes(100),
                     parkingFeeConfigRepo.paymentExpirationTimeSpan,
-                    Minutes(100)
                 )
             }
         }
