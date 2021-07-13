@@ -16,7 +16,7 @@ open class ParkingTariff {
 
     @Min(1)
     @Column(unique = true)
-    open var upperLimit: Duration = Duration.ofMinutes(0) //TODO: make lateinit
+    open lateinit var upperLimit: Duration //TODO: make lateinit
 
     @Column(nullable = false)
     open var fee: Double = 0.0

@@ -4,7 +4,6 @@ import org.hibernate.annotations.CreationTimestamp
 import java.time.Instant
 import javax.persistence.*
 import javax.validation.constraints.NotNull
-import kotlin.jvm.Transient
 
 @Entity(name = "visits")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -15,7 +14,7 @@ open class Visit {
 
     @NotNull
     @CreationTimestamp
-    open var entryTime: Instant = Instant.now()
+    open lateinit var entryTime: Instant
 
     @NotNull
     open var ticketCode: Long = 0L

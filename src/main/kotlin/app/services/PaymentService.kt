@@ -2,6 +2,8 @@ package app.services
 
 import app.entities.OngoingVisit
 import app.entities.Payment
+import app.entities.timeOfStay
+import app.entities.totalAmountPaid
 import app.repos.ParkingFeeConfigRepo
 import java.time.Duration
 import java.time.Instant
@@ -17,12 +19,10 @@ class PaymentServiceImpl(
 ) : PaymentService {
     override fun calculateFee(ongoingVisit: OngoingVisit): Double {
         return if (ongoingVisit.payments.isEmpty()) {
-            val timeOfStay = getTimeOfStay(ongoingVisit)
-            calculateFee(timeOfStay)
+            calculateFee(ongoingVisit.timeOfStay)
         } else {
             return if (isLatestPaymentExpired(ongoingVisit)) {
-                val timeOfStay = getTimeOfStay(ongoingVisit)
-                calculateFee(timeOfStay) - getTotalAmountPaid(ongoingVisit)
+                calculateFee(ongoingVisit.timeOfStay) - ongoingVisit.totalAmountPaid
             } else {
                 0.0
             }
@@ -37,15 +37,6 @@ class PaymentServiceImpl(
             parkingTariffService.getHighestTariff()?.fee ?: 0.0
         }
     }
-
-    private fun getTimeOfStay(ongoingVisit: OngoingVisit): Duration {
-        val minutesSinceEntry: Long =
-            ongoingVisit.entryTime.until(Instant.now(), ChronoUnit.MINUTES)
-        return Duration.ofMinutes(minutesSinceEntry)
-    }
-
-    private fun getTotalAmountPaid(ongoingVisit: OngoingVisit) =
-        ongoingVisit.payments.fold(0.0) { acc, payment -> acc + payment.amount!! }
 
     private fun isLatestPaymentExpired(ongoingVisit: OngoingVisit): Boolean {
         val latestPayment = getLatestPayment(ongoingVisit)
