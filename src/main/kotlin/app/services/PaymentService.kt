@@ -19,17 +19,17 @@ class PaymentServiceImpl(
 ) : PaymentService {
     override fun calculateFee(ongoingVisit: OngoingVisit): Double {
         return if (ongoingVisit.payments.isEmpty()) {
-            calculateFee(ongoingVisit.timeOfStay)
+            getFeeFromTariffs(ongoingVisit.timeOfStay)
         } else {
             return if (isLatestPaymentExpired(ongoingVisit)) {
-                calculateFee(ongoingVisit.timeOfStay) - ongoingVisit.totalAmountPaid
+                getFeeFromTariffs(ongoingVisit.timeOfStay) - ongoingVisit.totalAmountPaid
             } else {
                 0.0
             }
         }
     }
 
-    private fun calculateFee(timeOfStay: Duration): Double {
+    private fun getFeeFromTariffs(timeOfStay: Duration): Double {
         val overlappingTariff = parkingTariffService.getOverlappingTariff(timeOfStay)
         return if (overlappingTariff != null)
             overlappingTariff.fee

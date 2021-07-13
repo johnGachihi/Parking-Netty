@@ -5,6 +5,7 @@ import app.repos.ParkingTariffRepo
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -16,7 +17,7 @@ import java.time.Duration
 
 @ExtendWith(MockKExtension::class)
 internal class ParkingTariffServiceImplTest {
-    @MockK
+    @RelaxedMockK
     private lateinit var parkingTariffRepo: ParkingTariffRepo
 
     @InjectMockKs
@@ -69,7 +70,7 @@ internal class ParkingTariffServiceImplTest {
     @Nested
     @DisplayName("Test getHighestTariff")
     inner class TestGetHighestTariff {
-
+        // TODO: Use a test function
         @Nested
         @DisplayName("When there is parking tariff data")
         inner class TestWhenThereIsParkingTariffData {

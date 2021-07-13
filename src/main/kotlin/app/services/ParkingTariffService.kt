@@ -12,11 +12,13 @@ interface ParkingTariffService {
 class ParkingTariffServiceImpl(
     private val parkingTariffRepo: ParkingTariffRepo
 ) : ParkingTariffService {
-    override fun getOverlappingTariff(duration: Duration): ParkingTariff? {
-        val tariffs = parkingTariffRepo.getAllInAscendingOrder()
 
-        return tariffs.find { it.upperLimit > duration }
+    private val orderedParkingTariffs: List<ParkingTariff> by lazy {
+        parkingTariffRepo.getAllInAscendingOrder()
     }
+
+    override fun getOverlappingTariff(duration: Duration): ParkingTariff? =
+        orderedParkingTariffs.find { it.upperLimit > duration }
 
     override fun getHighestTariff() =
         parkingTariffRepo.getAllInAscendingOrder().lastOrNull()

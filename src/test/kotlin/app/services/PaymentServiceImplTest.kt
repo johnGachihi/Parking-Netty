@@ -37,13 +37,6 @@ internal class PaymentServiceImplTest {
     @Nested
     @DisplayName("When no payments have been made for ongoing visit")
     inner class TestWhenNoPaymentsMadeForOngoingVisit {
-        private lateinit var ongoingVisit: OngoingVisit
-
-        @BeforeEach
-        fun init() {
-            ongoingVisit = OngoingVisit()
-        }
-
         @Test
         fun `then use time-of-stay and parking tariffs to calculate fee`() {
             val ongoingVisit = OngoingVisit().apply {
