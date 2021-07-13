@@ -33,7 +33,6 @@ dependencies {
     testImplementation("io.insert-koin:koin-test-junit5:3.1.0")
     testImplementation("io.mockk:mockk:1.11.0")
     testImplementation("com.h2database:h2:1.4.200")
-    testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.5.10")
 }
 
 tasks.getByName<Test>("test") {

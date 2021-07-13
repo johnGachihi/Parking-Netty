@@ -5,7 +5,6 @@ import app.entities.Payment
 import app.entities.timeOfStay
 import app.entities.totalAmountPaid
 import app.repos.ParkingFeeConfigRepo
-import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -19,22 +18,13 @@ class PaymentServiceImpl(
 ) : PaymentService {
     override fun calculateFee(ongoingVisit: OngoingVisit): Double {
         return if (ongoingVisit.payments.isEmpty()) {
-            getFeeFromTariffs(ongoingVisit.timeOfStay)
+            parkingTariffService.getFee(ongoingVisit.timeOfStay)
         } else {
             return if (isLatestPaymentExpired(ongoingVisit)) {
-                getFeeFromTariffs(ongoingVisit.timeOfStay) - ongoingVisit.totalAmountPaid
+                parkingTariffService.getFee(ongoingVisit.timeOfStay) - ongoingVisit.totalAmountPaid
             } else {
                 0.0
             }
-        }
-    }
-
-    private fun getFeeFromTariffs(timeOfStay: Duration): Double {
-        val overlappingTariff = parkingTariffService.getOverlappingTariff(timeOfStay)
-        return if (overlappingTariff != null)
-            overlappingTariff.fee
-        else {
-            parkingTariffService.getHighestTariff()?.fee ?: 0.0
         }
     }
 

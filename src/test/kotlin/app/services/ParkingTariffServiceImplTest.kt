@@ -4,10 +4,9 @@ import app.entities.ParkingTariff
 import app.repos.ParkingTariffRepo
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -24,53 +23,8 @@ internal class ParkingTariffServiceImplTest {
     private lateinit var parkingTariffService: ParkingTariffServiceImpl
 
     @Nested
-    @DisplayName("Test getOverlappingTariff")
-    inner class TestGetOverlappingTariff {
-
-        @Nested
-        @DisplayName("When there is parking tariff data")
-        inner class TestWhenThereIsTariffData {
-            @BeforeEach
-            fun initTariffs() {
-                every {
-                    parkingTariffRepo.getAllInAscendingOrder()
-                } returns listOf(
-                    makeParkingTariff(1, Duration.ofMinutes(10)),
-                    makeParkingTariff(2, Duration.ofMinutes(20)),
-                    makeParkingTariff(3, Duration.ofMinutes(30)),
-                )
-            }
-
-            @Test
-            fun `Returns first tariff with a larger upperLimit than the duration provided`() {
-                var tariff = parkingTariffService.getOverlappingTariff(Duration.ofMinutes(9))
-                assertNotNull(tariff)
-                assertEquals(1, tariff!!.id)
-
-                tariff = parkingTariffService.getOverlappingTariff(Duration.ofMinutes(22))
-                assertNotNull(tariff)
-                assertEquals(3, tariff!!.id)
-            }
-
-            @Test
-            fun `and when duration is larger than the upperLimit for all tariffs, then returns null`() {
-                val tariff = parkingTariffService.getOverlappingTariff(Duration.ofMinutes(100))
-                assertNull(tariff)
-            }
-        }
-
-        @Test
-        fun `When there is no parking tariff data, then returns null`() {
-            every { parkingTariffRepo.getAllInAscendingOrder() } returns emptyList()
-
-            assertNull(parkingTariffService.getOverlappingTariff(Duration.ofMinutes(1)))
-        }
-    }
-
-    @Nested
-    @DisplayName("Test getHighestTariff")
-    inner class TestGetHighestTariff {
-        // TODO: Use a test function
+    @DisplayName("Test getFee")
+    inner class TestGetFee {
         @Nested
         @DisplayName("When there is parking tariff data")
         inner class TestWhenThereIsParkingTariffData {
@@ -79,33 +33,39 @@ internal class ParkingTariffServiceImplTest {
                 every {
                     parkingTariffRepo.getAllInAscendingOrder()
                 } returns listOf(
-                    makeParkingTariff(1, Duration.ofMinutes(10)),
-                    makeParkingTariff(2, Duration.ofMinutes(20)),
-                    makeParkingTariff(3, Duration.ofMinutes(30)),
+                    makeParkingTariff(1, Duration.ofMinutes(10), fee = 1.0),
+                    makeParkingTariff(2, Duration.ofMinutes(20), fee = 2.0),
+                    makeParkingTariff(3, Duration.ofMinutes(30), fee = 3.0),
                 )
             }
 
             @Test
-            fun `returns tariff with highest upperLimit`() {
-                val tariff = parkingTariffService.getHighestTariff()
+            fun `and there is an overlapping tariff, return the overlapping tariff's fee`() {
+                val fee = parkingTariffService.getFee(Duration.ofMinutes(19))
 
-                assertNotNull(tariff)
-                assertEquals(3, tariff!!.id)
+                assertEquals(2.0, fee)
+            }
+
+            @Test
+            fun `and there is no overlapping tariff, returns the fee for the tariff with the highest upperLimit`() {
+                val fee = parkingTariffService.getFee(Duration.ofMinutes(40))
+
+                assertEquals(3.0, fee)
             }
         }
 
         @Test
-        fun `When there is no parking tariff data, returns null`() {
-            every { parkingTariffRepo.getAllInAscendingOrder() } returns emptyList()
+        fun `When there is no parking tariff data, returns 0`() {
+            val fee = parkingTariffService.getFee(Duration.ofMinutes(40))
 
-            assertNull(parkingTariffService.getHighestTariff())
+            assertEquals(0.0, fee)
         }
     }
 
-    private fun makeParkingTariff(id: Long, upperLimit: Duration) =
+    private fun makeParkingTariff(id: Long, upperLimit: Duration, fee: Double = 1.0) =
         ParkingTariff().apply {
             this.id = id
             this.upperLimit = upperLimit
-            fee = 1.0
+            this.fee = fee
         }
 }

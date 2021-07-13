@@ -11,17 +11,12 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import minutesAgo
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Duration
 import java.time.Instant
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.isAccessible
 
 @ExtendWith(MockKExtension::class)
 internal class PaymentServiceImplTest {
@@ -46,62 +41,32 @@ internal class PaymentServiceImplTest {
             paymentService.calculateFee(ongoingVisit)
 
             verify {
-                parkingTariffService.getOverlappingTariff(Duration.ofMinutes(22))
+                parkingTariffService.getFee(Duration.ofMinutes(22))
             }
         }
 
         @Test
-        fun `and there is an overlapping tariff for visit's time-of-stay, return fee as it gets it from the overlapping tariffs`() {
+        fun `returns fee as returned by parkingTariffService`() {
             val ongoingVisit = OngoingVisit().apply {
                 entryTime = 22.minutesAgo
             }
             every {
-                parkingTariffService.getOverlappingTariff(Duration.ofMinutes(22))
-            } returns makeParkingTariff(fee = 1234.0)
+                parkingTariffService.getFee(Duration.ofMinutes(22))
+            } returns 1234.0
 
             val fee = paymentService.calculateFee(ongoingVisit)
 
             assertEquals(1234.0, fee)
         }
-
-        @Nested
-        @DisplayName("and there is no overlapping tariff for visit's time-of-stay")
-        inner class TestThereIsNoOverlappingTariff {
-            @Test
-            fun `but there is a tariff with highest limit, returns fee for tariff with highest upperLimit`() {
-                val ongoingVisit = OngoingVisit().apply {
-                    entryTime = 22.minutesAgo
-                }
-                every { parkingTariffService.getOverlappingTariff(Duration.ofMinutes(22)) } returns null
-                every { parkingTariffService.getHighestTariff() } returns makeParkingTariff(fee = 1234.0)
-
-                val fee = paymentService.calculateFee(ongoingVisit)
-
-                assertEquals(1234.0, fee)
-            }
-
-            @Test
-            fun `and there is no tariff with highest limit, returns 0`() {
-                val ongoingVisit = OngoingVisit().apply {
-                    entryTime = 22.minutesAgo
-                }
-                every { parkingTariffService.getOverlappingTariff(Duration.ofMinutes(22)) } returns null
-                every { parkingTariffService.getHighestTariff() } returns null
-
-                val fee = paymentService.calculateFee(ongoingVisit)
-
-                assertEquals(0.0, fee)
-            }
-        }
     }
 
     @Nested
-    @DisplayName("When payments have been made for ongoing visit")
+    @DisplayName("When at least one payment has been made for ongoing visit")
     inner class TestWhenPaymentsMadeForOngoingVisit {
         @Test
         @DisplayName(
-            "if latest payment has expired, returns fee calculated from" +
-                    "time-of-stay and parking tariffs less the total amount already paid"
+            "and latest payment has expired, returns fee as returned by" +
+                    "parkingTariffService less the total amount already paid"
         )
         fun `test when latest payment has expired`() {
             val ongoingVisit = OngoingVisit().apply {
@@ -113,8 +78,8 @@ internal class PaymentServiceImplTest {
                 )
             }
             every {
-                parkingTariffService.getOverlappingTariff(Duration.ofMinutes(20))
-            } returns makeParkingTariff(fee = 1234.0)
+                parkingTariffService.getFee(Duration.ofMinutes(20))
+            } returns 1234.0
 
             every {
                 parkingFeeConfigRepo.paymentExpirationTimeSpan
@@ -160,17 +125,4 @@ internal class PaymentServiceImplTest {
         OngoingVisit().apply {
             this.payments = emptyList()
         }
-
-
-
-    fun <T : Any> returnValueClass(value: T): T {
-        require(value::class.isValue)
-        val constructor = value::class.primaryConstructor!!
-        val constructorParameter = constructor.parameters[0]
-        val memberProperty = value::class.declaredMemberProperties
-            .first { it.name == constructorParameter.name }
-            .apply { isAccessible = true }
-            .let @Suppress("UNCHECKED_CAST") { it as KProperty1<T, T> }
-        return memberProperty.get(value)
-    }
 }

@@ -5,8 +5,7 @@ import app.repos.ParkingTariffRepo
 import java.time.Duration
 
 interface ParkingTariffService {
-    fun getOverlappingTariff(duration: Duration): ParkingTariff?
-    fun getHighestTariff(): ParkingTariff?
+    fun getFee(duration: Duration): Double
 }
 
 class ParkingTariffServiceImpl(
@@ -17,9 +16,17 @@ class ParkingTariffServiceImpl(
         parkingTariffRepo.getAllInAscendingOrder()
     }
 
-    override fun getOverlappingTariff(duration: Duration): ParkingTariff? =
+    override fun getFee(duration: Duration): Double {
+        return if (orderedParkingTariffs.isNotEmpty())
+            getOverlappingTariff(duration)?.fee
+                ?: getHighestTariff()!!.fee
+        else
+            0.0
+    }
+
+    private fun getOverlappingTariff(duration: Duration): ParkingTariff? =
         orderedParkingTariffs.find { it.upperLimit > duration }
 
-    override fun getHighestTariff() =
+    private fun getHighestTariff() =
         parkingTariffRepo.getAllInAscendingOrder().lastOrNull()
 }
