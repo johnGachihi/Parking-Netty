@@ -1,11 +1,15 @@
 package app.repos
 
+import app.entities.FinishedVisit
 import app.entities.OngoingVisit
 import org.hibernate.Session
 
+// TODO: Make OngoingVisitRepository
 interface VisitRepository {
     fun saveOnGoingVisit(ongoingVisit: OngoingVisit): Long
     fun onGoingVisitExistsWithTicketCode(ticketCode: Long): Boolean
+    fun findOngoingVisitByTicketCode(ticketCode: Long): OngoingVisit?
+    fun finishOngoingVisit(ongoingVisit: OngoingVisit)
 }
 
 class VisitRepositoryImpl(
@@ -25,5 +29,24 @@ class VisitRepositoryImpl(
             .uniqueResult() as Long
 
         return count > 0
+    }
+
+    override fun findOngoingVisitByTicketCode(ticketCode: Long): OngoingVisit? {
+        return session.createQuery(
+            "SELECT v " +
+                    "FROM OngoingVisit v " +
+                    "WHERE v.ticketCode = :ticketCode"
+        )
+            .setParameter("ticketCode", ticketCode)
+            .uniqueResult() as OngoingVisit?
+    }
+
+    override fun finishOngoingVisit(ongoingVisit: OngoingVisit) {
+        session.delete(ongoingVisit)
+        session.save(FinishedVisit().apply {
+            entryTime = ongoingVisit.entryTime
+            ticketCode = ongoingVisit.ticketCode
+            payments = ongoingVisit.payments
+        })
     }
 }

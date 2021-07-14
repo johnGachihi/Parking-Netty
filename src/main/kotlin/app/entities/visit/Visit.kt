@@ -13,8 +13,7 @@ open class Visit {
     open var id: Long? = null
 
     @NotNull
-    @CreationTimestamp
-    open lateinit var entryTime: Instant
+    open var entryTime: Instant = Instant.now()
 
     @NotNull
     open var ticketCode: Long = 0L
@@ -22,7 +21,7 @@ open class Visit {
     @OneToMany(
         mappedBy = "visit",
         targetEntity = Payment::class,
-        cascade = [CascadeType.ALL],
+        cascade = [CascadeType.PERSIST, CascadeType.REFRESH],
         orphanRemoval = true
     )
     open var payments: List<Payment> = emptyList()
