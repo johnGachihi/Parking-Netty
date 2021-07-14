@@ -17,14 +17,10 @@ class PaymentServiceImpl(
     private val parkingFeeConfigRepo: ParkingFeeConfigRepo
 ) : PaymentService {
     override fun calculateFee(ongoingVisit: OngoingVisit): Double {
-        return if (ongoingVisit.payments.isEmpty()) {
-            parkingTariffService.getFee(ongoingVisit.timeOfStay)
+        return if (ongoingVisit.payments.isNotEmpty() && !isLatestPaymentExpired(ongoingVisit)) {
+            0.0
         } else {
-            return if (isLatestPaymentExpired(ongoingVisit)) {
-                parkingTariffService.getFee(ongoingVisit.timeOfStay) - ongoingVisit.totalAmountPaid
-            } else {
-                0.0
-            }
+            parkingTariffService.getFee(ongoingVisit.timeOfStay) - ongoingVisit.totalAmountPaid
         }
     }
 
