@@ -1,5 +1,7 @@
 package router
 
+import app.IllegalDataException
+import app.UnservicedFeeException
 import com.digitalpetri.modbus.ExceptionCode
 import com.digitalpetri.modbus.codec.ModbusTcpPayload
 import com.digitalpetri.modbus.responses.ExceptionResponse
@@ -19,7 +21,7 @@ class ExceptionHandlerImpl : ExceptionHandler {
         req as ModbusWriteRequest
         val modbusPayload = req.modbusTcpPayload
 
-        val responsePdu = if (exc is DecoderException) {
+        val responsePdu = if (exc is DecoderException || exc is IllegalDataException || exc is UnservicedFeeException) {
             ExceptionResponse(
                 modbusPayload.modbusPdu.functionCode,
                 ExceptionCode.IllegalDataValue

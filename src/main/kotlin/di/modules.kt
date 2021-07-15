@@ -2,11 +2,10 @@ package di
 
 import app.actionMap
 import app.endpoints.EntryEndpoint
+import app.endpoints.ExitEndpoint
 import app.endpoints.RfidEndpoint
-import app.repos.VisitRepository
-import app.repos.VisitRepositoryImpl
-import app.services.EntryService
-import app.services.EntryServiceImpl
+import app.repos.*
+import app.services.*
 import db.HibernateSessionContextManager
 import db.HibernateSessionContextManagerImpl
 import org.hibernate.Session
@@ -27,6 +26,14 @@ val appModules = module {
     factory { EntryEndpoint(get()) }
     factory<EntryService> { EntryServiceImpl(get()) }
     factory<VisitRepository> { VisitRepositoryImpl(get()) }
+
+    factory { ExitEndpoint(get()) }
+    factory<ExitService> { ExitServiceImpl(get(), get()) }
+    factory<PaymentService> { PaymentServiceImpl(get(), get()) }
+    factory<ParkingTariffService> { ParkingTariffServiceImpl(get()) }
+    factory<ParkingTariffRepo> { HibernateParkingTariffRepo(get()) }
+    factory<ParkingFeeConfigRepo> { ParkingFeeConfigRepoImpl(get()) }
+    factory<ConfigRepoHelper> { HibernateConfigRepoHelper(get()) }
 
     single { RfidEndpoint() }
 }
