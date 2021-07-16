@@ -12,10 +12,11 @@ open class Config {
     open var id: Long? = null
 
     @NotNull
-    @Column(unique = true)
+    @Column(name = "`key`", unique = true)
     open lateinit var key: String
 
     @NotNull
+    @Column(name = "`value`")
     open lateinit var value: String
 }
 

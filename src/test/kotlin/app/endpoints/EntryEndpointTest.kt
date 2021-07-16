@@ -1,7 +1,9 @@
 package app.endpoints
 
+import app.IllegalDataException
 import app.services.EntryService
 import com.digitalpetri.modbus.ExceptionCode
+import io.mockk.every
 import io.mockk.verify
 import io.netty.buffer.Unpooled
 import org.junit.jupiter.api.BeforeEach
@@ -25,6 +27,13 @@ class EntryEndpointTest : EndpointTest() {
     }
 
     @Test
+    fun `Accepts only a long ByteBuf`() {
+        val data = Unpooled.buffer().writeInt(123)
+        sendModbusWriteRequest(1, data)
+            .assertExceptional(ExceptionCode.IllegalDataValue)
+    }
+
+    @Test
     fun `service layer logic called appropriately`() {
         val entryService = declareMock<EntryService>()
 
@@ -36,8 +45,11 @@ class EntryEndpointTest : EndpointTest() {
     }
 
     @Test
-    fun `When data provided is invalid, then returns IllegalDataValue exception response`() {
-        val data = Unpooled.buffer().writeIntLE(123)
+    fun `When entry attempt throws IllegalDataException, then returns IllegalDataValue exception response`() {
+        val entryService = declareMock<EntryService>()
+        every { entryService.addVisit(any()) } throws IllegalDataException()
+
+        val data = Unpooled.buffer().writeLongLE(123)
         sendModbusWriteRequest(1, data)
             .assertExceptional(ExceptionCode.IllegalDataValue)
     }

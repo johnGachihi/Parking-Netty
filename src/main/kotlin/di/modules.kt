@@ -8,15 +8,19 @@ import app.repos.*
 import app.services.*
 import db.HibernateSessionContextManager
 import db.HibernateSessionContextManagerImpl
+import exceptionhandling.ExceptionHandler
+import exceptionhandling.ExceptionHandlerImpl
 import org.hibernate.Session
 import org.koin.dsl.module
-import router.*
+import router.EndpointFactory
+import router.KoinEndpointFactory
+import router.RequestHandlerImpl
 import server.RequestHandler
 
 
 val appModules = module {
     // System modules
-    factory<Session> { HibernateSessionContextManagerImpl.getCurrentSession() }
+    factory { HibernateSessionContextManagerImpl.getCurrentSession() }
     single<RequestHandler> { RequestHandlerImpl(get(), get(), get()) }
     single<EndpointFactory> { KoinEndpointFactory(actionMap) }
     single<HibernateSessionContextManager> { HibernateSessionContextManagerImpl }

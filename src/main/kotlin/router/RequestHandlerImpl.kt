@@ -4,9 +4,10 @@ import core.Request
 import core.Response
 import db.HibernateSessionContextManager
 import server.RequestHandler
+import exceptionhandling.ExceptionHandler
 
 class RequestHandlerImpl(
-    private val endpointFactory: EndpointFactory, // TODO: Create Router to find and run Endpoint
+    private val endpointFactory: EndpointFactory, // TODO: Create Router to find, instantiate and run Endpoint
     private val hibernateSessionContextManager: HibernateSessionContextManager, // Smell
     private val exceptionHandler: ExceptionHandler
 ) : RequestHandler {

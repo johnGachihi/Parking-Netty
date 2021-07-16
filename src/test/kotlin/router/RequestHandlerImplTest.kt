@@ -4,6 +4,7 @@ import core.Response
 import createMockRequest
 import createMockResponse
 import db.HibernateSessionContextManager
+import exceptionhandling.ExceptionHandler
 import io.mockk.*
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
