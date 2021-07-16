@@ -1,6 +1,6 @@
 import core.Request
 import core.Response
-import exceptionhandling.ExceptionHandlingStrategy
+import core.exceptionhandling.ExceptionHandlingStrategy
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 

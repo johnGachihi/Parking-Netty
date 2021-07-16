@@ -1,15 +1,16 @@
 import app.actionMap
+import app.di.appModules
+import core.di.coreModules
 import db.HibernateSessionContextManagerImpl
-import di.appModules
-import exceptionhandling.ExceptionHandlerImpl
+import core.exceptionhandling.ExceptionHandlerImpl
 import org.koin.core.context.GlobalContext.startKoin
-import router.KoinEndpointFactory
-import router.RequestHandlerImpl
+import core.router.KoinEndpointFactory
+import core.requesthandling.RequestHandlerImpl
 import server.Server
 
 // TODO: use KoinComponent
 fun main() {
-    startKoin { modules(appModules) }
+    startKoin { modules(coreModules, appModules) }
 
     val requestHandler = RequestHandlerImpl(
         KoinEndpointFactory(actionMap),

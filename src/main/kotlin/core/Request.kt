@@ -1,6 +1,6 @@
 package core
 
-import exceptionhandling.ExceptionHandlingStrategy
+import core.exceptionhandling.ExceptionHandlingStrategy
 
 interface Request {
     val actionCode: Int

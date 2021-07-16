@@ -2,9 +2,10 @@ package app.endpoints
 
 import com.digitalpetri.modbus.ExceptionCode
 import com.digitalpetri.modbus.responses.ExceptionResponse
-import core.modbus.ModbusResponse
+import modbus.ModbusResponse
 import db.HibernateSessionContextManager
-import di.appModules
+import app.di.appModules
+import core.di.coreModules
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.mockkClass
@@ -26,11 +27,11 @@ open class EndpointTest : KoinTest {
     @RegisterExtension
     @JvmField
     val koinTestExtension = KoinTestExtension.create {
-        modules(appModules, module {
+        modules(coreModules, appModules, module {
             single<HibernateSessionContextManager> { mockk(relaxed = true) }
             factory { MockServer(get()) }
 
-            // Required here only because in systemModules (appModules for now)
+            // Required here only because in coreModules (appModules for now)
             // a Session is set to be provided from HibernateSessionContextManager.getCurrentSession
             // This will be changed.
             single<Session> { mockk(relaxed = true) }

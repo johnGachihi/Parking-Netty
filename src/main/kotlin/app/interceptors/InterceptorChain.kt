@@ -1,5 +1,5 @@
 package app.interceptors
 
-import intercepting.Interceptor
+import core.intercepting.Interceptor
 
 val interceptorChain = listOf<Interceptor>()

@@ -10,7 +10,7 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.netty.util.concurrent.DefaultEventExecutorGroup
-import server.modbus.ModbusRequestCodec
+import modbus.server.ModbusRequestCodec
 import java.net.InetSocketAddress
 
 class Server(

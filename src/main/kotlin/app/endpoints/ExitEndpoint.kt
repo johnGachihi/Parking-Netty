@@ -4,10 +4,10 @@ import app.IllegalDataException
 import app.UnservicedFeeException
 import app.decoders.RfidDecoder
 import app.services.ExitService
-import exceptionhandling.ResponseException
-import exceptionhandling.ResponseExceptionStatus
-import router.modbus.Decoder
-import router.modbus.WriteRequestEndpoint
+import core.exceptionhandling.ResponseException
+import core.exceptionhandling.ResponseExceptionStatus
+import modbus.endpoints.Decoder
+import modbus.endpoints.WriteRequestEndpoint
 
 class ExitEndpoint(
     private val exitService: ExitService

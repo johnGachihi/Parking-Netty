@@ -3,10 +3,10 @@ package app.endpoints
 import app.IllegalDataException
 import app.decoders.RfidDecoder
 import app.services.EntryService
-import exceptionhandling.ResponseException
-import exceptionhandling.ResponseExceptionStatus
-import router.modbus.Decoder
-import router.modbus.WriteRequestEndpoint
+import core.exceptionhandling.ResponseException
+import core.exceptionhandling.ResponseExceptionStatus
+import modbus.endpoints.Decoder
+import modbus.endpoints.WriteRequestEndpoint
 
 class EntryEndpoint(
     private val entryService: EntryService

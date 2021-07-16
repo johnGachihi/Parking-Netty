@@ -4,7 +4,7 @@ import com.digitalpetri.modbus.codec.ModbusTcpPayload
 import com.digitalpetri.modbus.requests.WriteMultipleRegistersRequest
 import core.Request
 import core.Response
-import core.modbus.ModbusWriteRequest
+import modbus.ModbusWriteRequest
 import io.netty.buffer.ByteBuf
 import server.RequestHandler
 import kotlin.math.ceil

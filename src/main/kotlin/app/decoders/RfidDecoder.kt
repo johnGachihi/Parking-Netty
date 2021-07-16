@@ -2,7 +2,7 @@ package app.decoders
 
 import io.netty.buffer.ByteBuf
 import io.netty.handler.codec.DecoderException
-import router.modbus.Decoder
+import modbus.endpoints.Decoder
 
 class RfidDecoder : Decoder<Long> {
     override fun decode(byteBuf: ByteBuf): Long {

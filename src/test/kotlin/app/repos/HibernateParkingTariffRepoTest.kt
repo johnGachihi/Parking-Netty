@@ -48,7 +48,7 @@ internal class HibernateParkingTariffRepoTest {
         }
 
         @Test
-        fun `When first called, then puts result to query cache`() {
+        fun `When first called, puts result to query cache`() {
             callInSeparateSession {
                 HibernateParkingTariffRepo(it).getAllInAscendingOrder()
             }
