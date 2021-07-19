@@ -5,11 +5,14 @@ import app.endpoints.ExitEndpoint
 import app.endpoints.RfidEndpoint
 import app.repos.*
 import app.services.*
-import db.HibernateSessionContextManagerImpl
+import core.db.HibernateSessionContextManager
+import core.db.HibernateUtil
 import org.koin.dsl.module
 
 val appModules = module {
-    factory { HibernateSessionContextManagerImpl.getCurrentSession() }
+    single { HibernateUtil.sessionFactory } // Initialize Hibernate SessionFactory
+    single { HibernateSessionContextManager(get()) }
+    factory { HibernateUtil.currentSession }
 
     factory { EntryEndpoint(get()) }
     factory<EntryService> { EntryServiceImpl(get()) }

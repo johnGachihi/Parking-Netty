@@ -2,29 +2,29 @@ package core.requesthandling
 
 import core.Request
 import core.Response
-import db.HibernateSessionContextManager
 import server.RequestHandler
 import core.exceptionhandling.ExceptionHandler
 import core.router.EndpointFactory
 
 class RequestHandlerImpl(
     private val endpointFactory: EndpointFactory, // TODO: Create Router to find, instantiate and run Endpoint
-    private val hibernateSessionContextManager: HibernateSessionContextManager, // Smell
-    private val exceptionHandler: ExceptionHandler
+    private val exceptionHandler: ExceptionHandler,
+    override val eventManager: RequestHandlerEventManager = RequestHandlerEventManager()
 ) : RequestHandler {
+
     override fun handleRequest(request: Request): Response {
-        hibernateSessionContextManager.beginSessionContext()
+        eventManager.notifyRequestReceived()
 
         return try {
             val response = runEndpoint(request)
 
-            hibernateSessionContextManager.closeSessionContext()
+            eventManager.notifyRequestHandled()
 
             response
         } catch (e: Exception) {
             val response = exceptionHandler.handleException(e, request)
 
-            hibernateSessionContextManager.closeSessionContextExceptionally()
+            eventManager.notifyRequestHandleExceptionally()
 
             response
         }

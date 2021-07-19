@@ -1,16 +1,13 @@
 package app.endpoints
 
+import app.di.appModules
 import com.digitalpetri.modbus.ExceptionCode
 import com.digitalpetri.modbus.responses.ExceptionResponse
-import modbus.ModbusResponse
-import db.HibernateSessionContextManager
-import app.di.appModules
 import core.di.coreModules
 import io.mockk.junit5.MockKExtension
-import io.mockk.mockk
 import io.mockk.mockkClass
 import io.netty.buffer.ByteBuf
-import org.hibernate.Session
+import modbus.ModbusResponse
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.koin.dsl.module
@@ -28,13 +25,7 @@ open class EndpointTest : KoinTest {
     @JvmField
     val koinTestExtension = KoinTestExtension.create {
         modules(coreModules, appModules, module {
-            single<HibernateSessionContextManager> { mockk(relaxed = true) }
             factory { MockServer(get()) }
-
-            // Required here only because in coreModules (appModules for now)
-            // a Session is set to be provided from HibernateSessionContextManager.getCurrentSession
-            // This will be changed.
-            single<Session> { mockk(relaxed = true) }
         })
     }
 

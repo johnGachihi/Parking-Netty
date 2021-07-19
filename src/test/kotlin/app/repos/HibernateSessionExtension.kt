@@ -1,6 +1,6 @@
 package app.repos
 
-import db.createHibernateSessionFactory
+import core.db.createHibernateSessionFactory
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.junit.jupiter.api.extension.AfterEachCallback

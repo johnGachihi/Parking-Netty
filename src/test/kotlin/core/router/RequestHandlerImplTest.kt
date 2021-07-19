@@ -1,29 +1,36 @@
 package core.router
 
-import core.requesthandling.RequestHandlerImpl
 import core.Response
+import core.exceptionhandling.ExceptionHandler
+import core.requesthandling.RequestHandlerEventManager
+import core.requesthandling.RequestHandlerImpl
 import createMockRequest
 import createMockResponse
-import db.HibernateSessionContextManager
-import core.exceptionhandling.ExceptionHandler
-import io.mockk.*
+import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import org.junit.jupiter.api.Assertions.*
+import io.mockk.mockk
+import io.mockk.verify
+import io.mockk.verifyOrder
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 internal class RequestHandlerImplTest {
     @RelaxedMockK
-    lateinit var hibernateSessionContextManager: HibernateSessionContextManager
+    private lateinit var eventManager: RequestHandlerEventManager
+
     @RelaxedMockK
-    lateinit var endpointFactory: EndpointFactory
+    private lateinit var endpointFactory: EndpointFactory
+
     @RelaxedMockK
-    lateinit var exceptionHandler: ExceptionHandler
+    private lateinit var exceptionHandler: ExceptionHandler
+
     @InjectMockKs
-    lateinit var requestHandler: RequestHandlerImpl
+    private lateinit var requestHandler: RequestHandlerImpl
 
     @Test
     fun `Uses EndpointFactory to get Endpoint using the received Request's action-code`() {
@@ -79,35 +86,41 @@ internal class RequestHandlerImplTest {
     }
 
     @Test
-    fun `Begins hibernate session context, before attempting to handling request`() {
+    fun `Publishes 'RequestReceived' event, before attempting to handle request`() {
         requestHandler.handleRequest(createMockRequest())
 
         verifyOrder {
-            hibernateSessionContextManager.beginSessionContext()
+            eventManager.notifyRequestReceived()
             endpointFactory.getEndpoint(any())
         }
     }
 
     @Test
-    fun `Closes hibernate session context, after Request is handled`() {
+    fun `Publishes 'RequestHandled' event, after Request is handled`() {
         requestHandler.handleRequest(createMockRequest())
 
         verifyOrder {
             endpointFactory.getEndpoint(any())
-            hibernateSessionContextManager.closeSessionContext()
+            eventManager.notifyRequestHandled()
         }
     }
 
     @Test
-    fun `Closes hibernate session context exceptionally, if an exception is thrown when a Request is being handled`() {
+    @DisplayName(
+        "When request handling fails, the 'RequestHandledExceptionally'" +
+                "event is published after the request-handling attempt"
+    )
+    fun `test RequestHandledExceptionally event published`() {
         makeRequestHandlingThrowException()
 
         requestHandler.handleRequest(createMockRequest())
 
-        verify {
-            hibernateSessionContextManager.closeSessionContextExceptionally()
+        verifyOrder {
+            endpointFactory.getEndpoint(any())
+            eventManager.notifyRequestHandleExceptionally()
         }
     }
+
 
     private fun makeRequestHandlingThrowException(exception: Exception = Exception()) {
         every { endpointFactory.getEndpoint(any()) } throws exception
@@ -120,6 +133,7 @@ internal class RequestHandlerImplTest {
     private fun assertRequestHandlerReturns(response: Response) {
         assertEquals(
             response,
-            requestHandler.handleRequest(createMockRequest()))
+            requestHandler.handleRequest(createMockRequest())
+        )
     }
 }

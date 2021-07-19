@@ -1,6 +1,7 @@
-package db
+package core.db
 
 import app.entities.*
+import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.hibernate.boot.MetadataSources
 import org.hibernate.boot.registry.StandardServiceRegistry
@@ -19,4 +20,12 @@ fun createHibernateSessionFactory(): SessionFactory {
         .addAnnotatedClass(ParkingTariff::class.java)
         .buildMetadata()
     return metadata.buildSessionFactory()
+}
+
+object HibernateUtil {
+    val sessionFactory: SessionFactory
+        get() = createHibernateSessionFactory()
+
+    val currentSession: Session
+        get() = sessionFactory.currentSession
 }
