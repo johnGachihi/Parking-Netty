@@ -5,8 +5,8 @@ import app.endpoints.ExitEndpoint
 import app.endpoints.RfidEndpoint
 import app.repos.*
 import app.services.*
-import core.db.HibernateSessionContextManager
-import core.db.HibernateUtil
+import app.db.HibernateSessionContextManager
+import app.db.HibernateUtil
 import org.koin.dsl.module
 
 val appModules = module {

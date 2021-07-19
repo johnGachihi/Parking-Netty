@@ -1,5 +1,6 @@
 package app.entities
 
+import app.entities.visit.OngoingVisit
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit

@@ -1,7 +1,7 @@
 package app.repos
 
-import app.entities.FinishedVisit
-import app.entities.OngoingVisit
+import app.entities.visit.FinishedVisit
+import app.entities.visit.OngoingVisit
 import app.entities.Payment
 import minutesAgo
 import org.hibernate.Session

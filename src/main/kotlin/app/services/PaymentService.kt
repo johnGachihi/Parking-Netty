@@ -1,6 +1,6 @@
 package app.services
 
-import app.entities.OngoingVisit
+import app.entities.visit.OngoingVisit
 import app.entities.Payment
 import app.entities.timeOfStay
 import app.entities.totalAmountPaid

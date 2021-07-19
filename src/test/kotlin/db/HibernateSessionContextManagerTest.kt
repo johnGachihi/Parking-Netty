@@ -1,6 +1,6 @@
 package db
 
-import core.db.HibernateSessionContextManager
+import app.db.HibernateSessionContextManager
 import io.mockk.*
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK

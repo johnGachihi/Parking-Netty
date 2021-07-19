@@ -2,7 +2,7 @@ package app.services
 
 import app.IllegalDataException
 import app.UnservicedFeeException
-import app.entities.OngoingVisit
+import app.entities.visit.OngoingVisit
 import app.repos.VisitRepository
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs

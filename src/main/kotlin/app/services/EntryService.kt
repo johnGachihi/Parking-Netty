@@ -1,7 +1,7 @@
 package app.services
 
 import app.IllegalDataException
-import app.entities.OngoingVisit
+import app.entities.visit.OngoingVisit
 import app.repos.VisitRepository
 
 interface EntryService {

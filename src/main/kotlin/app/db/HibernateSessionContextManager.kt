@@ -1,4 +1,4 @@
-package core.db
+package app.db
 
 import core.requesthandling.RequestHandlerListener
 import org.hibernate.SessionFactory

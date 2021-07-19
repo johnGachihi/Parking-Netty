@@ -1,6 +1,6 @@
 package app.repos
 
-import app.entities.Visit
+import app.entities.visit.Visit
 import org.hibernate.Session
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test

@@ -1,5 +1,6 @@
 package app.entities
 
+import app.entities.visit.Visit
 import org.hibernate.annotations.CreationTimestamp
 import java.time.Instant
 import javax.persistence.Entity

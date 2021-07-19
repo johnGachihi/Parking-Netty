@@ -1,7 +1,7 @@
 import app.di.appModules
 import core.di.coreModules
 import org.koin.core.context.GlobalContext.startKoin
-import core.db.HibernateSessionContextManager
+import app.db.HibernateSessionContextManager
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import server.RequestHandler

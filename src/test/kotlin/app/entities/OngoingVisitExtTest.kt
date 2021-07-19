@@ -1,5 +1,6 @@
 package app.entities
 
+import app.entities.visit.OngoingVisit
 import minutesAgo
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
