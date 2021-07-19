@@ -1,6 +1,9 @@
-package core.db
+package app.db
 
 import app.entities.*
+import app.entities.visit.FinishedVisit
+import app.entities.visit.OngoingVisit
+import app.entities.visit.Visit
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.hibernate.boot.MetadataSources
@@ -23,8 +26,7 @@ fun createHibernateSessionFactory(): SessionFactory {
 }
 
 object HibernateUtil {
-    val sessionFactory: SessionFactory
-        get() = createHibernateSessionFactory()
+    val sessionFactory: SessionFactory = createHibernateSessionFactory()
 
     val currentSession: Session
         get() = sessionFactory.currentSession
