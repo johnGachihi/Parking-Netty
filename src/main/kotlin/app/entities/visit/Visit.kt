@@ -1,5 +1,8 @@
-package app.entities
+package app.entities.visit
 
+import app.entities.Payment
+import org.hibernate.annotations.Cascade
+import org.hibernate.annotations.CascadeType.*
 import org.hibernate.annotations.CreationTimestamp
 import java.time.Instant
 import javax.persistence.*
@@ -22,8 +25,8 @@ open class Visit {
         mappedBy = "visit",
         targetEntity = Payment::class,
         cascade = [CascadeType.PERSIST, CascadeType.REFRESH],
-        orphanRemoval = true
     )
+    @Cascade(SAVE_UPDATE)
     open var payments: List<Payment> = emptyList()
 }
 

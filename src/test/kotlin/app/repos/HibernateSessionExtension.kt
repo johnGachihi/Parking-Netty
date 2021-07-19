@@ -1,6 +1,6 @@
 package app.repos
 
-import core.db.createHibernateSessionFactory
+import app.db.createHibernateSessionFactory
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.junit.jupiter.api.extension.AfterEachCallback
@@ -44,7 +44,9 @@ class HibernateSessionExtension : BeforeEachCallback, AfterEachCallback, TestIns
     }
 
     private fun destroySession() {
-        session.transaction.rollback()
+        session.flush()
+        session.transaction.commit()
+//        session.transaction.rollback()
         session.close()
         sessionFactory.close()
     }
